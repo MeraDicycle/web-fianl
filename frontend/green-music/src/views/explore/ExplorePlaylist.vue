@@ -5,7 +5,7 @@
         <!-- 分类栏 -->
         <div class="filter-bar">
             <div class="filter-left">
-                <span class="current-category">华语</span>
+                <span class="current-category" :selectedCategory>{{ selectedCategory }}</span>
 
                 <div class="dropdown" @click.stop>
                     <span class="dropdown-title" @click="toggle">选择分类 ▾</span>
@@ -13,15 +13,15 @@
                     <div class="dropdown-panel" v-if="open">
                         <div class="filter-row">
                             <span class="label">语种：</span>
-                            <span class="item" v-for="l in languages" :key="l">{{ l }}</span>
+                            <span class="item" v-for="l in languages" :key="l" @click="select(l)">{{ l }}</span>
                         </div>
                         <div class="filter-row">
                             <span class="label">风格：</span>
-                            <span class="item" v-for="s in styles" :key="s">{{ s }}</span>
+                            <span class="item" v-for="s in styles" :key="s" @click="select(s)">{{ s }}</span>
                         </div>
                         <div class="filter-row">
                             <span class="label">场景：</span>
-                            <span class="item" v-for="sc in scenes" :key="sc">{{ sc }}</span>
+                            <span class="item" v-for="sc in scenes" :key="sc" @click="select(sc)">{{ sc }}</span>
                         </div>
                     </div>
                 </div>
@@ -74,10 +74,16 @@ const playlists = [
     }
 ]
 
+const selectedCategory = ref("华语2");
 const open = ref(false)
 
 const toggle = () => {
     open.value = !open.value
+}
+
+const select = (value) => {
+  selectedCategory.value = value
+  open.value = false
 }
 </script>
 
