@@ -1,0 +1,174 @@
+<!-- /explore-music/playlist -->
+<template>
+    <div class="playlist-page" @click="open = false">
+
+        <!-- 分类栏 -->
+        <div class="filter-bar">
+            <div class="filter-left">
+                <span class="current-category">华语</span>
+
+                <div class="dropdown" @click.stop>
+                    <span class="dropdown-title" @click="toggle">选择分类 ▾</span>
+
+                    <div class="dropdown-panel" v-if="open">
+                        <div class="filter-row">
+                            <span class="label">语种：</span>
+                            <span class="item" v-for="l in languages" :key="l">{{ l }}</span>
+                        </div>
+                        <div class="filter-row">
+                            <span class="label">风格：</span>
+                            <span class="item" v-for="s in styles" :key="s">{{ s }}</span>
+                        </div>
+                        <div class="filter-row">
+                            <span class="label">场景：</span>
+                            <span class="item" v-for="sc in scenes" :key="sc">{{ sc }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 歌单列表 -->
+        <div class="playlist-grid">
+            <div v-for="p in playlists" :key="p.id" class="playlist-card">
+                <img :src="p.cover" />
+                <div class="name">{{ p.name }}</div>
+                <div class="creator">by Green Music</div>
+            </div>
+        </div>
+
+    </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+const languages = ['华语', '欧美', '日语', '韩语']
+const styles = ['流行', '民谣', '电子', 'R&B']
+const scenes = ['学习', '工作', '夜晚', '放松']
+
+const playlists = [
+    {
+        id: 1,
+        name: '华语流行精选',
+        cover: 'https://picsum.photos/300?1'
+    },
+    {
+        id: 2,
+        name: '深夜治愈系',
+        cover: 'https://picsum.photos/300?2'
+    },
+    {
+        id: 3,
+        name: '学习专注 BGM',
+        cover: 'https://picsum.photos/300?3'
+    },
+    {
+        id: 4,
+        name: '轻松下午茶',
+        cover: 'https://picsum.photos/300?4'
+    },
+    {
+        id: 5,
+        name: '电子节奏感',
+        cover: 'https://picsum.photos/300?5'
+    }
+]
+
+const open = ref(false)
+
+const toggle = () => {
+    open.value = !open.value
+}
+</script>
+
+<style scoped>
+.playlist-page {
+    padding: 24px 40px;
+}
+
+/* 顶部分类 */
+.filter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #1ece9a;
+    padding-bottom: 12px;
+    margin-bottom: 30px;
+}
+
+.filter-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.current-category {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-title {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.dropdown-panel {
+    display: block;
+    position: absolute;
+    top: 40px;
+    left: 0;
+    width: 360px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .1);
+    padding: 16px;
+    z-index: 10;
+}
+
+.filter-row {
+    margin-bottom: 12px;
+}
+
+.label {
+    color: #999;
+    margin-right: 12px;
+}
+
+.item {
+    margin-right: 12px;
+    cursor: pointer;
+}
+
+.item:hover {
+    color: #1ece9a;
+}
+
+/* 歌单区域 */
+.playlist-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 24px;
+}
+
+.playlist-card img {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.name {
+    margin-top: 8px;
+    font-weight: 500;
+}
+
+.creator {
+    font-size: 12px;
+    color: #999;
+}
+</style>

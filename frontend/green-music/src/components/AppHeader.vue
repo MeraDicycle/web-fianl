@@ -51,6 +51,7 @@
   gap: 48px;
   font-size: 20px;
   font-weight: 500;
+  margin-left: -50px;
 }
 
 .guide {
@@ -79,11 +80,11 @@
 }
 
 .guide:hover::after,
-.router-link-exact-active::after {
+.router-link-active::after {
   transform: scaleX(1);
 }
 
-.router-link-exact-active {
+.router-link-active {
   color: var(--hover-color);
   font-weight: 600;
 }
