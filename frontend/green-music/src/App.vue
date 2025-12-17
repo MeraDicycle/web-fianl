@@ -1,12 +1,7 @@
 <template>
-  <div class="app">
-    <h1>Green Music</h1>
-  </div>
+  <router-view></router-view>
 </template>
 
 <style>
-.app {
-  padding: 40px;
-  font-size: 24px;
-}
+
 </style>
