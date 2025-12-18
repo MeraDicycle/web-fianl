@@ -47,6 +47,7 @@
         :key="song.id"
         @mouseenter="hoverIndex = index"
         @mouseleave="hoverIndex = -1"
+        @click="goSongDetail(song.id)"
       >
         <span class="col-index">
           <span v-if="hoverIndex !== index">{{ index + 1 }}</span>
@@ -69,8 +70,15 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const hoverIndex = ref(-1)
+
+
+const goSongDetail = (id) => {
+  router.push(`/explore-music/song-detail/${id}`)
+}
 
 const playlist = {
   cover: 'https://picsum.photos/300?playlist',

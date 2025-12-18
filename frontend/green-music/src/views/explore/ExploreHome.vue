@@ -17,6 +17,7 @@
           v-for="item in playlists"
           :key="item.id"
           class="playlist-card"
+          @click="goPlaylistDetail(item.id)"
         >
           <img :src="item.cover" />
           <div class="playlist-name">{{ item.name }}</div>
@@ -29,7 +30,7 @@
       <h3>热门歌曲</h3>
 
       <ul class="song-list">
-        <li v-for="song in songs" :key="song.id">
+        <li v-for="song in songs" :key="song.id" @click="goSongDetail(song.id)">
           <span class="song-name">{{ song.name }}</span>
           <span class="song-artist">{{ song.artist }}</span>
         </li>
@@ -40,6 +41,14 @@
 </template>
 
 <script setup>
+  import { useRouter } from 'vue-router';
+  const router = useRouter()
+  const goPlaylistDetail = (id) => {
+    router.push(`/explore-music/playlist/${id}`)
+  }
+  const goSongDetail = (id) => {
+    router.push(`/explore-music/song-detail/${id}`)
+  }
 const playlists = [
   {
     id: 1,
@@ -53,6 +62,16 @@ const playlists = [
   },
   {
     id: 3,
+    name: '深夜治愈系',
+    cover: 'https://picsum.photos/200?3'
+  },
+  {
+    id: 4,
+    name: '深夜治愈系',
+    cover: 'https://picsum.photos/200?3'
+  },
+  {
+    id: 5,
     name: '深夜治愈系',
     cover: 'https://picsum.photos/200?3'
   }
@@ -86,7 +105,7 @@ section {
 
 .playlist-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 20px;
   margin-top: 16px;
 }
@@ -97,6 +116,7 @@ section {
 
 .playlist-card img {
   width: 100%;
+  max-width: 300px;
   border-radius: 8px;
 }
 
