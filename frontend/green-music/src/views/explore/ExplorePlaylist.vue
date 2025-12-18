@@ -30,18 +30,25 @@
 
         <!-- 歌单列表 -->
         <div class="playlist-grid">
-            <div v-for="p in playlists" :key="p.id" class="playlist-card">
+            <div v-for="p in playlists" :key="p.id" class="playlist-card" @click="goDetail(p.id)">
                 <img :src="p.cover" />
                 <div class="name">{{ p.name }}</div>
                 <div class="creator">by Green Music</div>
             </div>
         </div>
-
+        <div class="pagination-block">
+            <el-pagination size='large' layout="prev, pager, next" :total="1000"  class="pagination"/>
+        </div>
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+const goDetail = (id) => {
+    router.push(`/explore-music/playlist/${id}`)
+}
 const languages = ['华语', '欧美', '日语', '韩语']
 const styles = ['流行', '民谣', '电子', 'R&B']
 const scenes = ['学习', '工作', '夜晚', '放松']
@@ -71,6 +78,16 @@ const playlists = [
         id: 5,
         name: '电子节奏感',
         cover: 'https://picsum.photos/300?5'
+    },
+    {
+        id: 6,
+        name: '电子节奏感',
+        cover: 'https://picsum.photos/300?5'
+    },
+    {
+        id: 7,
+        name: '电子节奏感',
+        cover: 'https://picsum.photos/300?5'
     }
 ]
 
@@ -82,8 +99,8 @@ const toggle = () => {
 }
 
 const select = (value) => {
-  selectedCategory.value = value
-  open.value = false
+    selectedCategory.value = value
+    open.value = false
 }
 </script>
 
@@ -122,6 +139,7 @@ const select = (value) => {
     border: 1px solid #ddd;
     border-radius: 6px;
     cursor: pointer;
+    color: #67C23A;
 }
 
 .dropdown-panel {
@@ -176,5 +194,12 @@ const select = (value) => {
 .creator {
     font-size: 12px;
     color: #999;
+}
+.pagination-block {
+    display: flex;
+    justify-content: center;
+}
+.pagination {
+    color: #67C23A;
 }
 </style>

@@ -7,6 +7,7 @@ import ExploreLayout from '../layouts/ExploreLayout.vue'
 import ExploreHome from '../views/explore/ExploreHome.vue'
 import ExplorePlaylist from '../views/explore/ExplorePlaylist.vue'
 import ExploreRank from '../views/explore/ExploreRank.vue'
+import ExplorePlaylistDetail from '../views/explore/ExplorePlaylistDetail.vue'
 
 const routes = [
     {
@@ -19,6 +20,7 @@ const routes = [
                 children: [
                     {path: 'home', component: ExploreHome},
                     {path: 'playlist', component: ExplorePlaylist},
+                    {path: 'playlist/:id', component: ExplorePlaylistDetail},
                     {path: 'rank', component: ExploreRank},
 
 
