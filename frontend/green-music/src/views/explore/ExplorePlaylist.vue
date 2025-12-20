@@ -31,13 +31,16 @@
         <!-- 歌单列表 -->
         <div class="playlist-grid">
             <div v-for="p in playlists" :key="p.id" class="playlist-card" @click="goDetail(p.id)">
-                <img :src="p.cover" />
+                <div class="cover-wrapper">
+                    <img :src="p.cover" />
+                    <div class="play-btn">▶</div>
+                </div>
                 <div class="name">{{ p.name }}</div>
                 <div class="creator">by Green Music</div>
             </div>
         </div>
         <div class="pagination-block">
-            <el-pagination size='large' layout="prev, pager, next" :total="1000"  class="pagination"/>
+            <el-pagination size='large' layout="prev, pager, next" :total="1000" class="pagination" />
         </div>
     </div>
 </template>
@@ -177,13 +180,57 @@ const select = (value) => {
 /* 歌单区域 */
 .playlist-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+
 }
 
-.playlist-card img {
-    width: 100%;
-    border-radius: 8px;
+.playlist-card {
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.playlist-card:hover {
+  transform: translateY(-6px);
+}
+
+.cover-wrapper {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.cover-wrapper img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+
+/* 播放按钮 */
+.play-btn {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #1db954;
+  color: #000;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0;
+  transform: translateY(8px) scale(0.9);
+  transition: all 0.25s ease;
+}
+
+/* hover 时显示播放按钮 */
+.playlist-card:hover .play-btn {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 .name {
@@ -195,10 +242,12 @@ const select = (value) => {
     font-size: 12px;
     color: #999;
 }
+
 .pagination-block {
     display: flex;
     justify-content: center;
 }
+
 .pagination {
     color: #67C23A;
 }

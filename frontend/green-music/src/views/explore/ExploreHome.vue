@@ -13,16 +13,11 @@
       <h3 @click="goPlaylist">推荐歌单 >>></h3>
 
       <div class="playlist-grid">
-        <div
-          v-for="item in playlists"
-          :key="item.id"
-          class="playlist-card"
-          @click="goPlaylistDetail(item.id)"
-        >
-            <div class="cover-wrapper">
-    <img :src="item.cover" />
-    <div class="play-btn">▶</div>
-  </div>
+        <div v-for="item in playlists" :key="item.id" class="playlist-card" @click="goPlaylistDetail(item.id)">
+          <div class="cover-wrapper">
+            <img :src="item.cover" />
+            <div class="play-btn">▶</div>
+          </div>
           <div class="playlist-name">{{ item.name }}</div>
         </div>
       </div>
@@ -44,20 +39,20 @@
 </template>
 
 <script setup>
-  import { useRouter } from 'vue-router';
-  const router = useRouter()
-  const goPlaylistDetail = (id) => {
-    router.push(`/explore-music/playlist/${id}`)
-  }
-  const goPlaylist = () => {
-    router.push(`/explore-music/playlist`)
-  }
-  const goSongDetail = (id) => {
-    router.push(`/explore-music/song-detail/${id}`)
-  }
-  const goRank = () => {
-    router.push(`/explore-music/rank`)
-  }
+import { useRouter } from 'vue-router';
+const router = useRouter()
+const goPlaylistDetail = (id) => {
+  router.push(`/explore-music/playlist/${id}`)
+}
+const goPlaylist = () => {
+  router.push(`/explore-music/playlist`)
+}
+const goSongDetail = (id) => {
+  router.push(`/explore-music/song-detail/${id}`)
+}
+const goRank = () => {
+  router.push(`/explore-music/rank`)
+}
 const playlists = [
   {
     id: 1,
@@ -182,6 +177,7 @@ section h3 {
   cursor: pointer;
   transition: color 0.2s;
 }
+
 section h3:hover {
   color: #1db954;
 }
@@ -211,7 +207,4 @@ section h3:hover {
 .song-artist {
   color: #999;
 }
-
-
 </style>
-
