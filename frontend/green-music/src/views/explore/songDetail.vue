@@ -24,8 +24,24 @@
 
         <div class="actions">
           <button class="play">▶ 播放</button>
-          <button class="btn">♡ 收藏</button> 
-          <button class="btn">➕添加到</button> 
+          <button class="btn">♡ 收藏</button>
+          <button class="btn" @click="showAddTo = true" @click.stop>➕添加到</button>
+
+          <div v-if="showAddTo" class="add-to-popover show">
+            <div class="popover-header">播放列表</div>
+
+            <div class="playlist-list">
+              <div class="playlist-item" v-for="pl in myPlaylists" :key="pl.id" @click="addToPlaylist(pl)">
+                <span>{{ pl.name }}</span>
+                <span class="count">{{ pl.count }} 首</span>
+              </div>
+            </div>
+
+            <div class="create-playlist" @click="createPlaylist">
+              ➕ 添加到新歌单
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -41,11 +57,20 @@
       </div>
     </div>
 
+    <!-- 添加到歌单弹窗 -->
+
   </div>
 </template>
 
 
 <script setup>
+import { ref } from 'vue'
+const showAddTo = ref(false)
+
+document.addEventListener('click', () => {
+  showAddTo.value = false
+})
+
 const song = {
   name: '溯 (Reverse) feat. 马吟吟',
   artists: 'CORSAK胡梦周 / 马吟吟',
@@ -56,6 +81,29 @@ const song = {
   releaseDate: '2018-07-27',
   commentCount: 54114,
   cover: 'https://picsum.photos/300?reverse'
+}
+const myPlaylists = ref([
+  { id: 1, name: '我喜欢的音乐', count: 32 },
+  { id: 2, name: '学习 BGM', count: 18 },
+  { id: 3, name: '夜晚循环', count: 24 }
+])
+const closeAddTo = () => {
+  showAddTo.value = false
+}
+const addToPlaylist = (playlist) => {
+  console.log('添加到歌单：', playlist.name)
+  // 这里以后接后端 API
+  showAddTo.value = false
+}
+const createPlaylist = () => {
+  const name = prompt('请输入歌单名称')
+  if (!name) return
+
+  myPlaylists.value.push({
+    id: Date.now(),
+    name,
+    count: 0
+  })
 }
 
 const lyrics = [
@@ -137,6 +185,7 @@ const lyrics = [
 .actions {
   display: flex;
   gap: 14px;
+  position: relative;
 }
 
 .play {
@@ -163,10 +212,73 @@ const lyrics = [
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
 }
+
 .btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgb(0, 0, 0, 0.15)
 }
+
+.add-to-popover {
+  position: absolute;
+  top: 42px;
+  left: 160px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
+  border-radius: 10px;
+  overflow: hidden;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: left;
+
+  opacity: 0;
+  transform: translateY(-6px) scale(0.96);
+  transform-origin: top left;
+
+  transition:
+    opacity 0.18s ease-out,
+    transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.add-to-popover.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+
+.popover-header {
+  padding: 10px 12px;
+  color: black;
+  border-bottom: 1px solid #eee;
+}
+
+.popover-header:hover{
+  background: #f5f7f9;
+}
+
+.playlist-list {
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.playlist-item {
+  padding: 10px 12px;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.playlist-item:hover {
+  background: #f5f7f9;
+}
+
+.create-playlist {
+  padding: 10px 12px;
+  border-top: 1px solid #eee;
+  cursor: pointer;
+  color: #1db954;
+}
+
+
 
 /* 歌词 */
 .lyrics-section {
@@ -191,6 +303,4 @@ const lyrics = [
 .lyrics p {
   margin: 4px 0;
 }
-
 </style>
-
