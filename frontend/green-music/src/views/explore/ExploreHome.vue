@@ -10,7 +10,7 @@
 
     <!-- 推荐歌单 -->
     <section class="playlist-section">
-      <h3>推荐歌单</h3>
+      <h3 @click="goPlaylist">推荐歌单 >>></h3>
 
       <div class="playlist-grid">
         <div
@@ -27,7 +27,7 @@
 
     <!-- 热门歌曲 -->
     <section class="song-section">
-      <h3>热门歌曲</h3>
+      <h3 @click="goRank">热门歌曲 >>></h3>
 
       <ul class="song-list">
         <li v-for="song in songs" :key="song.id" @click="goSongDetail(song.id)">
@@ -46,8 +46,14 @@
   const goPlaylistDetail = (id) => {
     router.push(`/explore-music/playlist/${id}`)
   }
+  const goPlaylist = () => {
+    router.push(`/explore-music/playlist`)
+  }
   const goSongDetail = (id) => {
     router.push(`/explore-music/song-detail/${id}`)
+  }
+  const goRank = () => {
+    router.push(`/explore-music/rank`)
   }
 const playlists = [
   {
@@ -103,6 +109,11 @@ section {
   color: #888;
 }
 
+.playlist-section h3:hover{
+  color: var(--hover-color);
+  cursor: pointer;
+}
+
 .playlist-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -125,6 +136,11 @@ section {
   font-weight: 500;
 }
 
+.song-section h3:hover {
+  color: var(--hover-color);
+  cursor: pointer;
+}
+
 .song-list {
   margin-top: 12px;
   list-style: none;
@@ -138,6 +154,11 @@ section {
   border-bottom: 1px solid #eee;
 }
 
+.song-list li:hover {
+  color: var(--hover-color);
+  cursor: pointer;
+}
+
 .song-name {
   font-weight: 500;
 }
@@ -145,5 +166,7 @@ section {
 .song-artist {
   color: #999;
 }
+
+
 </style>
 
