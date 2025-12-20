@@ -14,5 +14,6 @@ import PlayerBar from '../components/PlayerBar.vue';
 <style scoped>
 .page {
   padding-bottom: 80px;
+
 }
 </style>

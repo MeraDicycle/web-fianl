@@ -3,18 +3,16 @@
 
     <!-- 榜单头部 -->
     <div class="rank-header">
-      <h1 class="title">流行指数榜</h1>
+      <h1 class="title">{{currentRankTitle}}</h1>
       <span class="date">2025-12-18</span>
-      <span class="rule">榜单规则</span>
     </div>
 
-    <!-- 操作区 -->
-    <div class="rank-actions">
-      <button class="play-all">▶ 播放全部</button>
-      <button class="btn">＋ 添加到</button>
-      <button class="btn">⬇ 下载</button>
-      <button class="btn">批量操作</button>
-      <button class="btn">💬 评论({{ commentCount }})</button>
+    <!-- 榜单切换 -->
+    <div class="rank-tabs">
+      <div v-for="tab in rankTabs" :key="tab.key" class="rank-tab" :class="{ active: currentRank === tab.key }"
+        @click="currentRank = tab.key">
+        {{ tab.name }}
+      </div>
     </div>
 
     <!-- 表头 -->
@@ -26,15 +24,10 @@
     </div>
 
     <!-- 榜单列表 -->
-    <div
-      class="rank-row"
-      v-for="(song, index) in songs"
-      :key="song.id"
-    >
+    <div class="rank-row" v-for="(song, index) in songs" :key="song.id" @click="goSongDetail(song.id)">
       <!-- 排名 -->
       <div class="col-rank">
         <div class="rank-num">{{ index + 1 }}</div>
-        <div class="rank-up">↑ {{ song.up }}%</div>
       </div>
 
       <!-- 歌曲 -->
@@ -42,7 +35,6 @@
         <img class="cover" :src="song.cover" />
         <span class="song-name">
           {{ song.name }}
-          <span v-if="song.mv" class="mv">MV</span>
         </span>
       </div>
 
@@ -57,46 +49,64 @@
 </template>
 
 <script setup>
-const commentCount = 25754
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
-const songs = [
-  {
-    id: 1,
-    name: '左转灯 (1000 Times +1) (Live)',
-    artist: '汪苏泷 / Eric周兴哲',
-    duration: '03:14',
-    up: 112,
-    mv: true,
-    cover: 'https://picsum.photos/80?1'
-  },
-  {
-    id: 2,
-    name: '原来是这样～',
-    artist: '周深',
-    duration: '03:30',
-    up: 89,
-    mv: true,
-    cover: 'https://picsum.photos/80?2'
-  },
-  {
-    id: 3,
-    name: '深海漫游指南',
-    artist: '梓渝',
-    duration: '03:30',
-    up: 81,
-    cover: 'https://picsum.photos/80?3'
-  },
-  {
-    id: 4,
-    name: '趁黎明来临前说爱吧',
-    artist: '梓渝',
-    duration: '03:49',
-    up: 76,
-    mv: true,
-    cover: 'https://picsum.photos/80?4'
-  }
+const rankTabs = [
+  { key: 'hot', name: '🔥 热歌榜' },
+  { key: 'pop', name: '🎧 流行指数榜' },
+  { key: 'new', name: '🆕 新歌榜' },
 ]
+
+const currentRank = ref('hot')
+
+const rankData = {
+  hot: [
+    {
+      id: 1,
+      name: '左转灯 (1000 Times +1)',
+      artist: '汪苏泷 / Eric周兴哲',
+      duration: '03:14',
+      cover: 'https://picsum.photos/80?1'
+    },
+    {
+      id: 2,
+      name: '原来是这样～',
+      artist: '周深',
+      duration: '03:30',
+      cover: 'https://picsum.photos/80?2'
+    },
+  ],
+  pop: [
+    {
+      id: 3,
+      name: '孤独患者',
+      artist: '陈奕迅',
+      duration: '04:02',
+      cover: 'https://picsum.photos/80?3'
+    }
+  ],
+  new: [
+    {
+      id: 4,
+      name: '新世界',
+      artist: '华晨宇',
+      duration: '03:58',
+      cover: 'https://picsum.photos/80?4'
+    }
+  ]
+}
+
+const songs = computed(() => rankData[currentRank.value])
+const currentRankTitle = computed(() => {
+  return rankTabs.find(tab => tab.key === currentRank.value)?.name || ''
+})
+const goSongDetail = (id) => {
+  router.push(`/explore-music/song-detail/${id}`)
+}
 </script>
+
 
 <style scoped>
 .rank-page {
@@ -119,27 +129,6 @@ const songs = [
   color: #666;
 }
 
-.rule {
-  color: #1ece9a;
-  cursor: pointer;
-}
-
-/* 操作区 */
-.rank-actions {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.play-all {
-  background: #1ece9a;
-  color: #fff;
-  border: none;
-  padding: 8px 18px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
 .btn {
   background: #fff;
   border: 1px solid #ddd;
@@ -147,6 +136,33 @@ const songs = [
   border-radius: 6px;
   cursor: pointer;
 }
+
+
+.rank-tabs {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.rank-tab {
+  padding: 8px 18px;
+  border-radius: 20px;
+  background: #f0f0f0;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.rank-tab:hover {
+  background: #eaf7f0;
+}
+
+.rank-tab.active {
+  background: #1db954;
+  color: #fff;
+  font-weight: 600;
+}
+
 
 /* 表头 */
 .rank-table-header {
@@ -168,7 +184,7 @@ const songs = [
 }
 
 .rank-row:hover {
-  background: #f7f7f7;
+  background: #f4fbf7;
 }
 
 /* 排名 */
@@ -183,10 +199,6 @@ const songs = [
   font-weight: 600;
 }
 
-.rank-up {
-  font-size: 12px;
-  color: #1ece9a;
-}
 
 /* 歌曲 */
 .col-song {
@@ -203,15 +215,6 @@ const songs = [
 
 .song-name {
   font-weight: 500;
-}
-
-.mv {
-  margin-left: 6px;
-  font-size: 12px;
-  color: #1ece9a;
-  border: 1px solid #1ece9a;
-  padding: 0 4px;
-  border-radius: 4px;
 }
 
 /* 其他 */

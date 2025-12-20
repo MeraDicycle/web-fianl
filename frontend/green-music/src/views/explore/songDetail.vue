@@ -1,3 +1,4 @@
+<!-- /explore-music/song-detail -->
 <template>
   <div class="song-detail-page">
 
@@ -23,10 +24,8 @@
 
         <div class="actions">
           <button class="play">▶ 播放</button>
-          <button class="btn">智能曲谱</button>
-          <button class="btn">♡ 收藏</button>
-          <button class="btn">💬 评论({{ song.commentCount }})</button>
-          <button class="btn">··· 更多</button>
+          <button class="btn">♡ 收藏</button> 
+          <button class="btn">➕添加到</button> 
         </div>
       </div>
     </div>
@@ -91,80 +90,107 @@ const lyrics = [
 /* 顶部 */
 .song-header {
   display: flex;
-  gap: 30px;
+  gap: 32px;
   margin-bottom: 40px;
+
+  padding: 28px;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
 }
 
 .cover {
   width: 260px;
   height: 260px;
-  border-radius: 8px;
+  border-radius: 12px;
   object-fit: cover;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
+
 
 .info {
   flex: 1;
 }
 
 .title {
-  font-size: 28px;
+  font-size: 30px;
+  font-weight: 700;
   margin-bottom: 10px;
 }
 
 .artists {
   color: #666;
-  margin-bottom: 14px;
+  font-size: 15px;
+  margin-bottom: 18px;
 }
+
 
 .meta {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 6px 20px;
-  color: #444;
+  gap: 6px 24px;
+  color: #555;
   font-size: 14px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
+
 
 .actions {
   display: flex;
-  gap: 12px;
+  gap: 14px;
 }
 
 .play {
-  background: #1ece9a;
+  background: #1db954;
   color: #fff;
   border: none;
-  padding: 8px 18px;
-  border-radius: 6px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  font-size: 14px;
   cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.play:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(29, 185, 84, 0.4);
 }
 
 .btn {
   background: #fff;
   border: 1px solid #ddd;
-  padding: 8px 14px;
-  border-radius: 6px;
+  padding: 10px 18px;
+  border-radius: 999px;
   cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgb(0, 0, 0, 0.15)
 }
 
 /* 歌词 */
 .lyrics-section {
-  margin-top: 20px;
+  background: #fff;
+  padding: 24px 28px;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
 }
 
 .lyrics-title {
   font-size: 20px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .lyrics {
-  line-height: 1.8;
+  line-height: 1.9;
   color: #333;
   white-space: pre-line;
+  font-size: 15px;
 }
 
 .lyrics p {
-  margin: 2px 0;
+  margin: 4px 0;
 }
+
 </style>
 

@@ -24,9 +24,7 @@
         </div>
 
         <div class="actions">
-          <button class="play-all">▶ 播放全部</button>
           <button class="btn">♡ 收藏</button>
-          <button class="btn">💬 评论({{ playlist.commentCount }})</button>
         </div>
       </div>
     </div>
@@ -194,9 +192,14 @@ const songs = [
 .btn {
   background: #fff;
   border: 1px solid #ddd;
-  padding: 8px 14px;
-  border-radius: 6px;
+  padding: 10px 18px;
+  border-radius: 999px;
   cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgb(0, 0, 0, 0.15)
 }
 
 /* 表格 */
@@ -223,7 +226,7 @@ const songs = [
 }
 
 .song-row:hover {
-  background: #f7f7f7;
+  background: var(--hover-light-color);
 }
 
 .col-index {
