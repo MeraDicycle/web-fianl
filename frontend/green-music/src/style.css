@@ -6,7 +6,8 @@
   color-scheme: light;
   color: black;
   background-color: white;
-  --hover-color: rgb(179, 225, 157);
+  /* --hover-color: rgb(179, 225, 157); */
+  --hover-color: #1db954;
 
 }
 

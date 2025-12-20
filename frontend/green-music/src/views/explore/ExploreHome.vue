@@ -19,7 +19,10 @@
           class="playlist-card"
           @click="goPlaylistDetail(item.id)"
         >
-          <img :src="item.cover" />
+            <div class="cover-wrapper">
+    <img :src="item.cover" />
+    <div class="play-btn">▶</div>
+  </div>
           <div class="playlist-name">{{ item.name }}</div>
         </div>
       </div>
@@ -109,36 +112,78 @@ section {
   color: #888;
 }
 
-.playlist-section h3:hover{
-  color: var(--hover-color);
-  cursor: pointer;
-}
-
 .playlist-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 20px;
-  margin-top: 16px;
 }
 
+/* 歌单卡片 */
 .playlist-card {
   cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-.playlist-card img {
+.playlist-card:hover {
+  transform: translateY(-6px);
+}
+
+/* 封面 */
+.cover-wrapper {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.cover-wrapper img {
   width: 100%;
-  max-width: 300px;
-  border-radius: 8px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
 }
 
+/* 播放按钮 */
+.play-btn {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #1db954;
+  color: #000;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0;
+  transform: translateY(8px) scale(0.9);
+  transition: all 0.25s ease;
+}
+
+/* hover 时显示播放按钮 */
+.playlist-card:hover .play-btn {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* 歌单名 */
 .playlist-name {
   margin-top: 8px;
-  font-weight: 500;
+  font-size: 14px;
+  color: black;
+  text-align: center;
 }
 
-.song-section h3:hover {
-  color: var(--hover-color);
+section h3 {
+  margin: 24px 0 12px;
+  font-size: 18px;
   cursor: pointer;
+  transition: color 0.2s;
+}
+section h3:hover {
+  color: #1db954;
 }
 
 .song-list {
