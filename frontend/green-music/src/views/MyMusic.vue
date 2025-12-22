@@ -1,15 +1,20 @@
 <template>
   <div class="my-page">
-
     <!-- 顶部背景 + 导航 -->
+
     <div class="my-header">
+      <!-- 用户信息 -->
+      <div class="user-info">
+        <img class="avatar" :src="user.avatar" />
+        <div class="user-meta">
+          <div class="nickname">{{ user.nickname }}</div>
+          <div class="uid">ID：{{ user.id }}</div>
+        </div>
+      </div>
+
       <div class="nav">
-        <span
-          v-for="item in tabs"
-          :key="item.key"
-          :class="['nav-item', { active: activeTab === item.key }]"
-          @click="activeTab = item.key"
-        >
+        <span v-for="item in tabs" :key="item.key" :class="['nav-item', { active: activeTab === item.key }]"
+          @click="activeTab = item.key">
           {{ item.label }}
         </span>
       </div>
@@ -20,12 +25,6 @@
 
       <!-- 我喜欢 -->
       <div v-if="activeTab === 'like'">
-        <div class="action-bar">
-          <button class="play-all">▶ 播放全部</button>
-          <button class="btn">＋ 添加到</button>
-          <button class="btn">⬇ 下载</button>
-        </div>
-
         <div class="table-header">
           <span>歌曲</span>
           <span>歌手</span>
@@ -33,11 +32,7 @@
           <span>时长</span>
         </div>
 
-        <div
-          class="song-row"
-          v-for="(song, index) in likedSongs"
-          :key="song.id"
-        >
+        <div class="song-row" v-for="(song, index) in likedSongs" :key="song.id" @click="goSongDetail(song.id)">
           <span>{{ index + 1 }}. {{ song.name }}</span>
           <span>{{ song.artist }}</span>
           <span>{{ song.album }}</span>
@@ -48,11 +43,7 @@
       <!-- 收藏的歌单 -->
       <div v-if="activeTab === 'collect'">
         <div class="playlist-grid">
-          <div
-            class="playlist-card"
-            v-for="p in collectedPlaylists"
-            :key="p.id"
-          >
+          <div class="playlist-card" v-for="p in collectedPlaylists" :key="p.id" @click="goPlayList(p.id)">
             <img :src="p.cover" />
             <div class="name">{{ p.name }}</div>
             <div class="count">{{ p.count }} 首</div>
@@ -63,11 +54,7 @@
       <!-- 创建的歌单 -->
       <div v-if="activeTab === 'create'">
         <div class="playlist-grid">
-          <div
-            class="playlist-card"
-            v-for="p in createdPlaylists"
-            :key="p.id"
-          >
+          <div class="playlist-card" v-for="p in createdPlaylists" :key="p.id" @click="goMyPlaylist(p.id)">
             <img :src="p.cover" />
             <div class="name">{{ p.name }}</div>
             <div class="count">{{ p.count }} 首</div>
@@ -81,6 +68,14 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+const user = ref({
+  id: 10001,
+  nickname: '蔡健雅',
+  avatar: 'https://picsum.photos/120'
+})
 
 const tabs = [
   { key: 'like', label: '我喜欢' },
@@ -125,6 +120,15 @@ const createdPlaylists = [
     cover: 'https://picsum.photos/200?m2'
   }
 ]
+const goPlayList = (id) => {
+  router.push(`/explore-music/playlist/${id}`)
+}
+const goSongDetail = (id) => {
+  router.push(`/explore-music/song-detail/${id}`)
+}
+const goMyPlaylist = (id) => {
+  router.push(`/my-playlist/${id}`)
+}
 </script>
 
 <style scoped>
@@ -134,11 +138,53 @@ const createdPlaylists = [
 
 /* 顶部 */
 .my-header {
-  height: 160px;
+  height: 180px;
   background: linear-gradient(120deg, #0f2027, #203a43, #2c5364);
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+  justify-content: flex-end;
 }
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 40px 10px;
+}
+
+.avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.user-meta {
+  color: #fff;
+}
+
+.nickname {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.uid {
+  margin-top: 4px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.nav {
+  display: flex;
+  gap: 40px;
+  padding: 0 40px 16px;
+}
+
+
+
 
 .nav {
   display: flex;
@@ -160,28 +206,6 @@ const createdPlaylists = [
 /* 内容 */
 .my-content {
   padding: 30px 40px;
-}
-
-/* 操作栏 */
-.action-bar {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.play-all {
-  background: #1ece9a;
-  color: #fff;
-  border: none;
-  padding: 8px 18px;
-  border-radius: 6px;
-}
-
-.btn {
-  border: 1px solid #ddd;
-  background: #fff;
-  padding: 8px 14px;
-  border-radius: 6px;
 }
 
 /* 表格 */

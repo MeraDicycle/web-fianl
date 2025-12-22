@@ -37,6 +37,7 @@
         class="result-item"
         v-for="song in results"
         :key="song.id"
+        @click="goSongDetail(song.id)"
       >
         <span class="name">{{ song.name }}</span>
         <span class="artist">{{ song.artist }}</span>
@@ -53,9 +54,14 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const keyword = ref('')
 const searched = ref(false)
+const goSongDetail = (id) => {
+  router.push(`explore-music/song-detail/${id}`)
+}
 
 const hotKeywords = [
   '周杰伦',

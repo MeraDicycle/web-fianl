@@ -9,6 +9,7 @@ import ExplorePlaylist from '../views/explore/ExplorePlaylist.vue'
 import ExploreRank from '../views/explore/ExploreRank.vue'
 import ExplorePlaylistDetail from '../views/explore/ExplorePlaylistDetail.vue'
 import SongDetail from '../views/explore/songDetail.vue'
+import MyPlaylist from '../views/MyPlaylist.vue'
 
 const routes = [
     {
@@ -26,7 +27,8 @@ const routes = [
                     {path: 'song-detail/:id', component: SongDetail},
                 ]
             },
-            { path: 'my-music', component: MyMusic }
+            { path: 'my-music', component: MyMusic },
+            { path: 'my-playlist/:id', component: MyPlaylist },
         ]
     }
 ]
