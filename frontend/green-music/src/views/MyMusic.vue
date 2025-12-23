@@ -1,13 +1,14 @@
 <template>
   <div class="my-page">
     <!-- 顶部背景 + 导航 -->
-
     <div class="my-header">
       <!-- 用户信息 -->
       <div class="user-info">
         <img class="avatar" :src="user.avatar" />
         <div class="user-meta">
-          <div class="nickname">{{ user.nickname }}</div>
+          <div class="nickname">{{ user.nickname }} <el-icon class="setting" @click="openEdit">
+              <Setting />
+            </el-icon></div>
           <div class="uid">ID：{{ user.id }}</div>
         </div>
       </div>
@@ -45,6 +46,7 @@
         <div class="playlist-grid">
           <div class="playlist-card" v-for="p in collectedPlaylists" :key="p.id" @click="goPlayList(p.id)">
             <img :src="p.cover" />
+            <div class="play-btn">▶</div>
             <div class="name">{{ p.name }}</div>
             <div class="count">{{ p.count }} 首</div>
           </div>
@@ -61,14 +63,43 @@
           </div>
         </div>
       </div>
-
     </div>
+
+    <!-- 修改资料弹窗 -->
+    <el-dialog v-model="showEdit" title="修改个人资料" width="400px">
+      <div class="edit-form">
+        <!-- 头像 -->
+        <div class="form-item">
+          <label>头像</label>
+          <div class="avatar-edit">
+            <img :src="editForm.avatar" class="avatar-preview" />
+            <el-input v-model="editForm.avatar" placeholder="输入头像图片 URL" size="small" />
+          </div>
+        </div>
+
+        <!-- 昵称 -->
+        <div class="form-item">
+          <label>昵称</label>
+          <el-input v-model="editForm.nickname" placeholder="请输入昵称" />
+        </div>
+      </div>
+
+      <template #footer>
+        <el-button @click="showEdit = false">取消</el-button>
+        <el-button type="primary" @click="saveProfile">
+          保存
+        </el-button>
+      </template>
+    </el-dialog>
+
+
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { Setting } from '@element-plus/icons-vue'
 const router = useRouter()
 
 const user = ref({
@@ -76,6 +107,7 @@ const user = ref({
   nickname: '蔡健雅',
   avatar: 'https://picsum.photos/120'
 })
+
 
 const tabs = [
   { key: 'like', label: '我喜欢' },
@@ -129,6 +161,28 @@ const goSongDetail = (id) => {
 const goMyPlaylist = (id) => {
   router.push(`/my-playlist/${id}`)
 }
+/* 弹窗显示 */
+const showEdit = ref(false)
+
+/* 编辑表单 */
+const editForm = ref({
+  nickname: '',
+  avatar: ''
+})
+
+/* 打开编辑 */
+const openEdit = () => {
+  editForm.value.nickname = user.value.nickname
+  editForm.value.avatar = user.value.avatar
+  showEdit.value = true
+}
+
+/* 保存修改 */
+const saveProfile = () => {
+  user.value.nickname = editForm.value.nickname
+  user.value.avatar = editForm.value.avatar
+  showEdit.value = false
+}
 </script>
 
 <style scoped>
@@ -177,19 +231,14 @@ const goMyPlaylist = (id) => {
   color: rgba(255, 255, 255, 0.7);
 }
 
-.nav {
-  display: flex;
-  gap: 40px;
-  padding: 0 40px 16px;
+.setting:hover {
+  cursor: pointer;
 }
 
-
-
-
 .nav {
   display: flex;
   gap: 40px;
-  padding: 0 40px 20px;
+  padding: 10px 40px 10px;
 }
 
 .nav-item {
@@ -212,42 +261,158 @@ const goMyPlaylist = (id) => {
 .table-header,
 .song-row {
   display: grid;
-  grid-template-columns: 2fr 1.5fr 1.5fr 80px;
-  padding: 10px 0;
+  grid-template-columns: 2.2fr 1.6fr 1.6fr 72px;
+  align-items: center;
+  padding: 12px 12px;
 }
+
 
 .table-header {
   color: #999;
+  font-size: 13px;
   border-bottom: 1px solid #eee;
 }
 
+
 .song-row {
-  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  border-bottom: 1px solid #f2f2f2;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .song-row:hover {
-  background: #f7f7f7;
+  background: var(--hover-light-color, #f4fbf7);
+  transform: translateX(4px);
 }
+
+.song-row span:first-child {
+  font-weight: 500;
+}
+
+.song-row span:nth-child(2),
+.song-row span:nth-child(3) {
+  color: #666;
+}
+
+.song-row span:last-child {
+  color: #999;
+  font-size: 13px;
+  text-align: right;
+}
+
+
 
 /* 歌单 */
 .playlist-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 24px;
 }
 
-.playlist-card img {
-  width: 100%;
-  border-radius: 8px;
+.playlist-card {
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
+
+
+.playlist-card img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.playlist-card:hover {
+  transform: translateY(-6px);
+}
+
+
 .name {
-  margin-top: 8px;
+  margin-top: 10px;
   font-weight: 500;
+  font-size: 15px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .count {
+  margin-top: 2px;
   font-size: 12px;
   color: #999;
 }
+
+.playlist-card {
+  position: relative;
+}
+
+.play-btn {
+  position: absolute;
+  right: 12px;
+  bottom: 68px;
+
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #1db954;
+  color: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0;
+  transform: translateY(6px) scale(0.9);
+  transition: all 0.2s ease;
+}
+
+.playlist-card:hover .play-btn {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+
+.setting {
+  margin-left: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #ddd;
+}
+
+.setting:hover {
+  color: #1db954;
+}
+
+/* 弹窗内 */
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-item label {
+  display: block;
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.avatar-edit {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.avatar-preview {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #eee;
+}
+
 </style>
