@@ -1,14 +1,14 @@
 package com.zjw.gmbackend.service;
 
-import com.zjw.gmbackend.vo.MusicVO;
+import com.zjw.gmbackend.pojo.Music;
 
 import java.util.List;
 
 public interface MusicService {
 
-    List<MusicVO> getRecommendList();
+    List<Music> getRecommendList();
 
-    MusicVO getMusicDetail(Long musicId);
+    Music getMusicDetail(Long musicId);
 
-    List<MusicVO> listByTag(String tag);
+    List<Music> listByTag(String tag);
 }

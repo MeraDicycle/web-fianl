@@ -1,5 +1,6 @@
 package com.zjw.gmbackend.controller;
 
+import com.zjw.gmbackend.pojo.Result;
 import com.zjw.gmbackend.service.MusicService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
@@ -12,17 +13,17 @@ public class MusicController {
     private MusicService musicService;
 
     @GetMapping("/recommend")
-    public Result<List<MusicVO>> recommend() {
+    public Result recommend() {
         return Result.success(musicService.getRecommendList());
     }
 
     @GetMapping("/{id}")
-    public Result<MusicVO> detail(@PathVariable Long id) {
+    public Result detail(@PathVariable Long id) {
         return Result.success(musicService.getMusicDetail(id));
     }
 
     @GetMapping("/tag")
-    public Result<List<MusicVO>> listByTag(@RequestParam String tag) {
+    public Result listByTag(@RequestParam String tag) {
         return Result.success(musicService.listByTag(tag));
     }
 }
