@@ -1,6 +1,8 @@
 package com.zjw.gmbackend.mapper;
 
 import com.zjw.gmbackend.pojo.Music;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 

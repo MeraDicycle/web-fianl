@@ -1,20 +1,15 @@
 package com.zjw.gmbackend.mapper;
 
 import com.zjw.gmbackend.pojo.Music;
+import org.apache.ibatis.annotations.Mapper;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class MusicMapper {
-    public List<Music> selectRecommendList() {
-        return new ArrayList<Music>();
-    }
+@Mapper
+public interface MusicMapper {
+    public List<Music> selectRecommendList();
 
-    public Music selectMusicDetail(Long musicId) {
-        return new Music();
-    }
+    public Music selectMusicDetail(Long musicId);
 
-    public List<Music> selectByTag(String tag) {
-        return new ArrayList<>();
-    }
+    public List<Music> selectByTag(String tag);
 }

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zjw.gmbackend.mapper.PlaylistMapper">
+
+    <!-- 查询歌单基本信息 -->
+    <select id="selectById" resultType="com.zjw.gmbackend.pojo.Playlist">
+        select
+            id,
+            user_id,
+            name,
+            cover_url,
+            description,
+            created_time
+        from playlist
+        where id = #{id}
+    </select>
+
+    <!-- 查询歌单下的歌曲 -->
+    <select id="selectMusicByPlaylistId" resultType="com.zjw.gmbackend.pojo.Music">
+        select
+            m.id,
+            m.title,
+            m.artist,
+            m.cover_url,
+            m.duration_sec
+        from playlist_music pm
+                 join music m on pm.music_id = m.id
+        where pm.playlist_id = #{playlistId}
+        order by pm.sort_order asc
+    </select>
+
+    <!-- 新建歌单 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into playlist (
+            user_id,
+            name,
+            cover_url,
+            description,
+            created_time
+        ) values (
+                     #{userId},
+                     #{name},
+                     #{coverUrl},
+                     #{description},
+                     #{createdTime}
+                 )
+    </insert>
+
+</mapper>
