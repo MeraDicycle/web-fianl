@@ -14,5 +14,4 @@ public class Music {
     private String coverUrl;
     private Integer durationSec;
     private Boolean liked;
-
 }
