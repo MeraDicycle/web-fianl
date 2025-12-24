@@ -23,7 +23,6 @@
 
     <!-- 内容区 -->
     <div class="my-content">
-
       <!-- 我喜欢 -->
       <div v-if="activeTab === 'like'">
         <div class="table-header">
@@ -63,7 +62,25 @@
           </div>
         </div>
       </div>
+
+      <!-- 播放历史 -->
+      <div v-if="activeTab === 'history'">
+      <div class="table-header">
+        <span>歌曲</span>
+        <span>歌手</span>
+        <span>专辑</span>
+        <span>时长</span>
+      </div>
+
+      <div class="song-row" v-for="(song, index) in historySongs" :key="song.id" @click="goSongDetail(song.id)">
+        <span>{{ index + 1 }}. {{ song.name }}</span>
+        <span>{{ song.artist }}</span>
+        <span>{{ song.album }}</span>
+        <span>{{ song.duration }}</span>
+      </div>
     </div>
+    </div>
+
 
     <!-- 修改资料弹窗 -->
     <el-dialog v-model="showEdit" title="修改个人资料" width="400px">
@@ -92,7 +109,6 @@
       </template>
     </el-dialog>
 
-
   </div>
 </template>
 
@@ -112,7 +128,8 @@ const user = ref({
 const tabs = [
   { key: 'like', label: '我喜欢' },
   { key: 'collect', label: '收藏的歌单' },
-  { key: 'create', label: '我创建的歌单' }
+  { key: 'create', label: '我创建的歌单' },
+  { key: 'history', label: '播放历史' }
 ]
 
 const activeTab = ref('like')
@@ -183,6 +200,25 @@ const saveProfile = () => {
   user.value.avatar = editForm.value.avatar
   showEdit.value = false
 }
+const historySongs = ref([
+  {
+    id: 1,
+    name: 'River',
+    artist: 'Charlie Puth',
+    album: 'Voicenotes',
+    duration: '03:41',
+    playTime: '2025-06-23 21:15'
+  },
+  {
+    id: 2,
+    name: '晴天',
+    artist: '周杰伦',
+    album: '叶惠美',
+    duration: '04:29',
+    playTime: '2025-06-23 20:48'
+  }
+])
+
 </script>
 
 <style scoped>
@@ -415,4 +451,8 @@ const saveProfile = () => {
   border: 1px solid #eee;
 }
 
+.play-time {
+  color: #999;
+  font-size: 13px;
+}
 </style>
