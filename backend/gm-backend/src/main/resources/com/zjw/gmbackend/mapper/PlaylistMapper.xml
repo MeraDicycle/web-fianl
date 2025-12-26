@@ -13,7 +13,8 @@
             name,
             cover_url,
             description,
-            created_time
+            created_time,
+            category
         from playlist
         where id = #{id}
     </select>
@@ -39,14 +40,70 @@
             name,
             cover_url,
             description,
-            created_time
+            created_time,
+            category
         ) values (
                      #{userId},
                      #{name},
                      #{coverUrl},
                      #{description},
-                     #{createdTime}
+                     #{createdTime},
+                     #{category}
                  )
     </insert>
+
+    <select id="existsMusic" resultType="int">
+        select count(1)
+        from playlist_music
+        where playlist_id = #{playlistId}
+          and music_id = #{musicId}
+    </select>
+
+    <select id="selectMaxSortOrder" resultType="int">
+        select max(sort_order)
+        from playlist_music
+        where playlist_id = #{playlistId}
+    </select>
+
+    <insert id="insertPlaylistMusic">
+        insert into playlist_music (playlist_id, music_id, sort_order)
+        values (#{playlistId}, #{musicId}, #{sortOrder})
+    </insert>
+
+    <delete id="deletePlaylistMusic">
+        delete
+        from playlist_music
+        where playlist_id = #{playlistId}
+          and music_id = #{musicId}
+    </delete>
+
+    <select id="selectList" resultType="com.zjw.gmbackend.pojo.Playlist">
+        select
+        id,
+        name,
+        cover_url,
+        description,
+        category,
+        created_time
+        from playlist
+        <where>
+            <if test="category != null and category != ''">
+                category = #{category}
+            </if>
+        </where>
+        order by created_time desc
+        limit #{offset}, #{size}
+    </select>
+
+    <select id="count" resultType="int">
+        select count(1)
+        from playlist
+        <where>
+            <if test="category != null and category != ''">
+                category = #{category}
+            </if>
+        </where>
+    </select>
+
 
 </mapper>

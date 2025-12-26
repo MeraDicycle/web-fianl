@@ -9,13 +9,30 @@ import java.util.List;
 
 @Mapper
 public interface PlaylistMapper {
-    Object getDetail(Long id);
 
-    void createPlaylist(Playlist playlist);
+    Playlist selectById(Long id);
 
-    Playlist selectById(@Param("id") Long id);
+    List<Music> selectMusicByPlaylistId(Long playlistId);
 
-    List<Music> selectMusicByPlaylistId(@Param("playlistId") Long playlistId);
+    void insert(Playlist playlist);
 
-    int insert(Playlist playlist);
+    Integer existsMusic(@Param("playlistId") Long playlistId,
+                        @Param("musicId") Long musicId);
+
+    Integer selectMaxSortOrder(@Param("playlistId") Long playlistId);
+
+    void insertPlaylistMusic(@Param("playlistId") Long playlistId,
+                             @Param("musicId") Long musicId,
+                             @Param("sortOrder") Integer sortOrder);
+
+    void deletePlaylistMusic(@Param("playlistId") Long playlistId,
+                             @Param("musicId") Long musicId);
+
+    List<Playlist> selectList(@Param("category") String category,
+                              @Param("offset") Integer offset,
+                              @Param("size") Integer size);
+
+    Integer count(@Param("category") String category);
+
 }
+

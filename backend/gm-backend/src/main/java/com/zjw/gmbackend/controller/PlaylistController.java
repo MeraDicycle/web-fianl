@@ -23,5 +23,28 @@ public class PlaylistController {
     public Result detail(@PathVariable Long id) {
         return Result.success(playlistService.getDetail(id));
     }
+
+    @PostMapping("/{playlistId}/music/{musicId}")
+    public Result addMusic(@PathVariable Long playlistId,
+                           @PathVariable Long musicId) {
+        playlistService.addMusicToPlaylist(playlistId, musicId);
+        return Result.success();
+    }
+
+    @DeleteMapping("/{playlistId}/music/{musicId}")
+    public Result removeMusic(@PathVariable Long playlistId,
+                              @PathVariable Long musicId) {
+        playlistService.removeMusicFromPlaylist(playlistId, musicId);
+        return Result.success();
+    }
+
+    @GetMapping("/list")
+    public Result list(@RequestParam(required = false) String category,
+                       @RequestParam(defaultValue = "1") Integer page,
+                       @RequestParam(defaultValue = "10") Integer size) {
+        return Result.success(playlistService.list(category, page, size));
+    }
+
+
 }
 

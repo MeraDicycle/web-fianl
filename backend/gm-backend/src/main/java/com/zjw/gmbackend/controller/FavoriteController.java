@@ -44,7 +44,5 @@ public class FavoriteController {
         Long userId = 101L;
         return Result.success(favoriteService.listFavoritePlaylist(userId));
     }
-
-
 }
 

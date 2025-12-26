@@ -16,6 +16,7 @@ public class Playlist {
     private String description;
     private LocalDateTime createdTime;
     private String coverUrl;
+    private String category;
 
     //not database 字段
     private Boolean liked;
