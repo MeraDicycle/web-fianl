@@ -13,5 +13,7 @@ public class Music {
     private String artist;
     private String coverUrl;
     private Integer durationSec;
+    private String lyric;
+    private String tags;
     private Boolean liked;
 }

@@ -15,12 +15,13 @@
         and target_id = #{musicId}
     </delete>
 
+    <!-- 是否已收藏 -->
     <select id="exists" resultType="int">
         select count(1)
         from favorite
         where user_id = #{userId}
-          and target_type = 1
-          and target_id = #{musicId}
+          and target_type = #{targetType}
+          and target_id = #{targetId}
     </select>
 
     <select id="selectFavoriteMusicList" resultType="com.zjw.gmbackend.pojo.Music">
@@ -31,5 +32,30 @@
           and f.target_type = 1
         order by f.created_time desc
     </select>
+
+    <select id="selectFavoritePlaylistList" resultType="com.zjw.gmbackend.pojo.Playlist">
+        select p.*, true as liked
+        from playlist p
+                 join favorite f on f.target_id = p.id
+        where f.user_id = #{userId}
+          and f.target_type = 2
+        order by f.created_time desc
+    </select>
+
+    <!-- 新增收藏 -->
+    <insert id="insert">
+        insert into favorite (user_id, target_type, target_id, created_time)
+        values (#{userId}, #{targetType}, #{targetId}, now())
+    </insert>
+
+    <!-- 取消收藏 -->
+    <delete id="delete">
+        delete
+        from favorite
+        where user_id = #{userId}
+          and target_type = #{targetType}
+          and target_id = #{targetId}
+    </delete>
+
 </mapper>
 
