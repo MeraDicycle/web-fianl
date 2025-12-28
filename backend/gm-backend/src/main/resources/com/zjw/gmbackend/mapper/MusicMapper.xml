@@ -36,4 +36,19 @@
         order by created_time desc
     </select>
 
+    <select id="searchByKeyword" resultType="Music">
+        select
+            id,
+            title,
+            artist,
+            album,
+            cover_url,
+            duration_sec
+        from music
+        where title like concat('%', #{keyword}, '%')
+           or artist like concat('%', #{keyword}, '%')
+        order by created_time desc
+    </select>
+
+
 </mapper>

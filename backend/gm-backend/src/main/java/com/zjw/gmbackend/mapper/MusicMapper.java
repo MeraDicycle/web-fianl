@@ -14,4 +14,6 @@ public interface MusicMapper {
     public Music selectMusicDetail(@Param("id") Long musicId);
 
     public List<Music> selectByTag(@Param("tag") String tag);
+
+    List<Music> searchByKeyword(@Param("keyword") String keyword);
 }
