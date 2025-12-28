@@ -40,7 +40,40 @@
 
 <script setup>
 import { useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+
+const songs = ref([])
 const router = useRouter()
+
+onMounted(async () => {
+  const res = await axios.get('http://localhost:8080/music/recommend')
+
+  songs.value = res.data.data.map(item => ({
+    id: item.id,
+    name: item.title,
+    artist: item.artist
+  }))
+})
+const playlists = ref([])
+
+onMounted(async () => {
+  const res = await axios.get('http://localhost:8080/playlist/list', {
+    params: {
+      page: 1,
+      size: 10
+    }
+  })
+
+  const list = res.data.data.list
+
+  playlists.value = list.map(p => ({
+    id: p.id,
+    name: p.name,
+    cover: p.coverUrl
+  }))
+})
+
 const goPlaylistDetail = (id) => {
   router.push(`/explore-music/playlist/${id}`)
 }
@@ -53,39 +86,19 @@ const goSongDetail = (id) => {
 const goRank = () => {
   router.push(`/explore-music/rank`)
 }
-const playlists = [
-  {
-    id: 1,
-    name: '学习必备 · 纯音乐',
-    cover: 'https://picsum.photos/200?1'
-  },
-  {
-    id: 2,
-    name: '华语流行精选',
-    cover: 'https://picsum.photos/200?2'
-  },
-  {
-    id: 3,
-    name: '深夜治愈系',
-    cover: 'https://picsum.photos/200?3'
-  },
-  {
-    id: 4,
-    name: '深夜治愈系',
-    cover: 'https://picsum.photos/200?3'
-  },
-  {
-    id: 5,
-    name: '深夜治愈系',
-    cover: 'https://picsum.photos/200?3'
-  }
-]
+// const playlists = [
+//   {
+//     id: 1,
+//     name: '学习必备 · 纯音乐',
+//     cover: 'https://picsum.photos/200?1'
+//   },                                
+// ]
 
-const songs = [
-  { id: 1, name: '晴天', artist: '周杰伦' },
-  { id: 2, name: '稻香', artist: '周杰伦' },
-  { id: 3, name: '起风了', artist: '买辣椒也用券' }
-]
+// const songs = [
+//   { id: 1, name: '晴天', artist: '周杰伦' },
+//   { id: 2, name: '稻香', artist: '周杰伦' },
+//   { id: 3, name: '起风了', artist: '买辣椒也用券' }
+// ]
 </script>
 
 

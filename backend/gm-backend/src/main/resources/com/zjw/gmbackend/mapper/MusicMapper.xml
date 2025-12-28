@@ -36,7 +36,7 @@
         order by created_time desc
     </select>
 
-    <select id="searchByKeyword" resultType="Music">
+    <select id="searchByKeyword" resultType="com.zjw.gmbackend.pojo.Music">
         select
             id,
             title,
@@ -49,6 +49,22 @@
            or artist like concat('%', #{keyword}, '%')
         order by created_time desc
     </select>
+
+    <select id="selectHistoryMusic" resultType="com.zjw.gmbackend.pojo.Music">
+        select
+            m.id,
+            m.title,
+            m.artist,
+            m.album,
+            m.cover_url,
+            m.duration_sec
+        from history h
+                 join music m on h.music_id = m.id
+        where h.user_id = #{userId}
+        order by h.play_time desc
+            limit 20
+    </select>
+
 
 
 </mapper>

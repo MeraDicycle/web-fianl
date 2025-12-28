@@ -40,63 +40,39 @@
             </div>
         </div>
         <div class="pagination-block">
-            <el-pagination size='large' layout="prev, pager, next" :total="1000" class="pagination" />
+            <el-pagination size="large" layout="prev, pager, next" :total="total" :page-size="pageSize"
+                :current-page="currentPage" @current-change="handlePageChange" class="pagination" />
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
+
 const router = useRouter()
+
 const goDetail = (id) => {
     router.push(`/explore-music/playlist/${id}`)
 }
+
+const currentPage = ref(1)
+const pageSize = ref(10)
+const total = ref(0)
+
+
+// 分类数据
 const languages = ['华语', '欧美', '日语', '韩语']
 const styles = ['流行', '民谣', '电子', 'R&B']
 const scenes = ['学习', '工作', '夜晚', '放松']
 
-const playlists = [
-    {
-        id: 1,
-        name: '华语流行精选',
-        cover: 'https://picsum.photos/300?1'
-    },
-    {
-        id: 2,
-        name: '深夜治愈系',
-        cover: 'https://picsum.photos/300?2'
-    },
-    {
-        id: 3,
-        name: '学习专注 BGM',
-        cover: 'https://picsum.photos/300?3'
-    },
-    {
-        id: 4,
-        name: '轻松下午茶',
-        cover: 'https://picsum.photos/300?4'
-    },
-    {
-        id: 5,
-        name: '电子节奏感',
-        cover: 'https://picsum.photos/300?5'
-    },
-    {
-        id: 6,
-        name: '电子节奏感',
-        cover: 'https://picsum.photos/300?5'
-    },
-    {
-        id: 7,
-        name: '电子节奏感',
-        cover: 'https://picsum.photos/300?5'
-    }
-]
-
-const selectedCategory = ref("华语2");
+// 状态
+const playlists = ref([])
+const selectedCategory = ref('华语')
 const open = ref(false)
 
+// 下拉框控制
 const toggle = () => {
     open.value = !open.value
 }
@@ -105,7 +81,50 @@ const select = (value) => {
     selectedCategory.value = value
     open.value = false
 }
+
+// 🔹 核心：请求歌单列表
+const loadPlaylists = async () => {
+    try {
+        const res = await axios.get('http://localhost:8080/playlist/list', {
+            params: {
+                category: selectedCategory.value,
+                page: currentPage.value,
+                size: pageSize.value
+            }
+        })
+
+        const { list, total: totalCount } = res.data.data
+
+        playlists.value = list.map(p => ({
+            id: p.id,
+            name: p.name,
+            cover: p.coverUrl
+        }))
+
+        total.value = totalCount
+
+    } catch (e) {
+        console.error('loadPlaylists error:', e)
+    }
+}
+
+// 页面加载时请求一次
+onMounted(() => {
+    loadPlaylists()
+})
+
+const handlePageChange = (page) => {
+    currentPage.value = page
+    loadPlaylists()
+}
+
+
+// 分类变化时自动重新请求
+watch(selectedCategory, () => {
+    loadPlaylists()
+})
 </script>
+
 
 <style scoped>
 .playlist-page {
@@ -191,46 +210,46 @@ const select = (value) => {
 }
 
 .playlist-card:hover {
-  transform: translateY(-6px);
+    transform: translateY(-6px);
 }
 
 .cover-wrapper {
-  position: relative;
-  border-radius: 12px;
-  overflow: hidden;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
 }
 
 .cover-wrapper img {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
 }
 
 /* 播放按钮 */
 .play-btn {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #1db954;
-  color: #000;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #1db954;
+    color: #000;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  opacity: 0;
-  transform: translateY(8px) scale(0.9);
-  transition: all 0.25s ease;
+    opacity: 0;
+    transform: translateY(8px) scale(0.9);
+    transition: all 0.25s ease;
 }
 
 /* hover 时显示播放按钮 */
 .playlist-card:hover .play-btn {
-  opacity: 1;
-  transform: translateY(0) scale(1);
+    opacity: 1;
+    transform: translateY(0) scale(1);
 }
 
 .name {
