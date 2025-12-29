@@ -34,5 +34,7 @@ public interface PlaylistMapper {
 
     Integer count(@Param("category") String category);
 
+    List<Playlist> selectByUserId(@Param("userId") Long userId);
+
 }
 

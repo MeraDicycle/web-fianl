@@ -105,5 +105,17 @@
         </where>
     </select>
 
+    <select id="selectByUserId" resultType="com.zjw.gmbackend.pojo.Playlist">
+        select
+            id,
+            name,
+            cover_url,
+            description
+        from playlist
+        where user_id = #{userId}
+        order by id desc
+    </select>
+
+
 
 </mapper>

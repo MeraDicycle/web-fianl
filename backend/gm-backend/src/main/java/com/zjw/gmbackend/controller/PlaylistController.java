@@ -45,6 +45,14 @@ public class PlaylistController {
         return Result.success(playlistService.list(category, page, size));
     }
 
+    @GetMapping("/my")
+    public Result listMyPlaylist() {
+        // Long userId = UserContext.getUserId();
+        Long userId = 101L;
+        return Result.success(playlistService.listByUserId(userId));
+    }
+
+
 
 }
 

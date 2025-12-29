@@ -55,13 +55,13 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
+
 const router = useRouter()
 
 const keyword = ref('')
 const searched = ref(false)
-const goSongDetail = (id) => {
-  router.push(`explore-music/song-detail/${id}`)
-}
+const results = ref([])
 
 const hotKeywords = [
   '周杰伦',
@@ -71,29 +71,50 @@ const hotKeywords = [
   '电子音乐'
 ]
 
-const allSongs = [
-  { id: 1, name: '晴天', artist: '周杰伦', duration: '04:29' },
-  { id: 2, name: '稻香', artist: '周杰伦', duration: '03:42' },
-  { id: 3, name: '起风了', artist: '买辣椒也用券', duration: '05:25' },
-  { id: 4, name: '光亮', artist: '周深', duration: '04:18' }
-]
+const goSongDetail = (id) => {
+  router.push(`/explore-music/song-detail/${id}`)
+}
 
-const results = ref([])
+const doSearch = async () => {
+  if (!keyword.value.trim()) return
 
-const doSearch = () => {
   searched.value = true
-  results.value = allSongs.filter(
-    s =>
-      s.name.includes(keyword.value) ||
-      s.artist.includes(keyword.value)
-  )
+
+  try {
+    const res = await axios.get('http://localhost:8080/search', {
+      params: {
+        keyword: keyword.value
+      }
+    })
+
+    const list = res.data.data || []
+
+    results.value = list.map(item => ({
+      id: item.id,
+      name: item.title,
+      artist: item.artist,
+      duration: formatDuration(item.durationSec)
+    }))
+  } catch (e) {
+    console.error('search error:', e)
+    results.value = []
+  }
 }
 
 const searchHot = (word) => {
   keyword.value = word
   doSearch()
 }
+
+const formatDuration = (sec) => {
+  if (!sec && sec !== 0) return ''
+  const m = Math.floor(sec / 60)
+  const s = sec % 60
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+}
+
 </script>
+
 
 <style scoped>
 .search-page {

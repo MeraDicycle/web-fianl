@@ -113,9 +113,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Setting } from '@element-plus/icons-vue'
+import axios from 'axios'
 const router = useRouter()
 
 const user = ref({
@@ -124,7 +125,6 @@ const user = ref({
   avatar: 'https://picsum.photos/120'
 })
 
-
 const tabs = [
   { key: 'like', label: '我喜欢' },
   { key: 'collect', label: '收藏的歌单' },
@@ -132,43 +132,13 @@ const tabs = [
   { key: 'history', label: '播放历史' }
 ]
 
-const activeTab = ref('like')
+const activeTab = ref('like') 
 
-const likedSongs = [
-  { id: 1, name: '青花', artist: '七元', album: '青花', duration: '03:48' },
-  { id: 2, name: '壁上观', artist: '鞠婧祎', album: '壁上观', duration: '03:41' },
-  { id: 3, name: '青衣 (DJ版)', artist: '草帽酱 / DJ阿泽', album: '青衣', duration: '05:44' }
-]
+const likedSongs = ref([])
+const collectedPlaylists = ref([])
+const createdPlaylists = ref([])
+const historySongs = ref([])
 
-const collectedPlaylists = [
-  {
-    id: 1,
-    name: '学习必备 BGM',
-    count: 58,
-    cover: 'https://picsum.photos/200?c1'
-  },
-  {
-    id: 2,
-    name: '华语流行精选',
-    count: 120,
-    cover: 'https://picsum.photos/200?c2'
-  }
-]
-
-const createdPlaylists = [
-  {
-    id: 1,
-    name: '我的最爱',
-    count: 36,
-    cover: 'https://picsum.photos/200?m1'
-  },
-  {
-    id: 2,
-    name: '夜晚循环',
-    count: 24,
-    cover: 'https://picsum.photos/200?m2'
-  }
-]
 const goPlayList = (id) => {
   router.push(`/explore-music/playlist/${id}`)
 }
@@ -180,45 +150,114 @@ const goMyPlaylist = (id) => {
 }
 /* 弹窗显示 */
 const showEdit = ref(false)
-
 /* 编辑表单 */
 const editForm = ref({
   nickname: '',
   avatar: ''
 })
-
 /* 打开编辑 */
 const openEdit = () => {
   editForm.value.nickname = user.value.nickname
   editForm.value.avatar = user.value.avatar
   showEdit.value = true
 }
-
 /* 保存修改 */
 const saveProfile = () => {
   user.value.nickname = editForm.value.nickname
   user.value.avatar = editForm.value.avatar
   showEdit.value = false
 }
-const historySongs = ref([
-  {
-    id: 1,
-    name: 'River',
-    artist: 'Charlie Puth',
-    album: 'Voicenotes',
-    duration: '03:41',
-    playTime: '2025-06-23 21:15'
-  },
-  {
-    id: 2,
-    name: '晴天',
-    artist: '周杰伦',
-    album: '叶惠美',
-    duration: '04:29',
-    playTime: '2025-06-23 20:48'
-  }
-])
 
+// 秒 → mm:ss
+const formatDuration = (sec) => {
+  if (!sec && sec !== 0) return ''
+  const m = Math.floor(sec / 60)
+  const s = sec % 60
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+}
+
+const loadLikedSongs = async () => {
+  try {
+    const res = await axios.get('http://localhost:8080/favorite/music')
+
+    const list = res.data.data || []
+
+    likedSongs.value = list.map(item => ({
+      id: item.id,
+      name: item.title,
+      artist: item.artist,
+      album: item.album,
+      duration: formatDuration(item.durationSec)
+    }))
+  } catch (e) {
+    console.error('load liked songs error:', e)
+    likedSongs.value = []
+  }
+}
+
+const loadCollectedPlaylists = async () => {
+  try {
+    const res = await axios.get('http://localhost:8080/favorite/playlist')
+
+    const list = res.data.data || []
+
+    collectedPlaylists.value = list.map(item => ({
+      id: item.id,
+      name: item.name,
+      cover: item.coverUrl,
+      count: item.musicCount
+    }))
+  } catch (e) {
+    console.error('load collected playlists error:', e)
+    collectedPlaylists.value = []
+  }
+}
+
+const loadHistorySongs = async () => {
+  try {
+    const res = await axios.get('http://localhost:8080/user/history')
+
+    const list = res.data.data || []
+
+    historySongs.value = list.map(item => ({
+      id: item.id,
+      name: item.title,
+      artist: item.artist,
+      album: '-', // 后端没给，先占位
+      duration: formatDuration(item.durationSec)
+    }))
+  } catch (e) {
+    console.error('load history error:', e)
+    historySongs.value = []
+  }
+}
+
+const loadCreatedPlaylists = async () => {
+  try {
+    const res = await axios.get('http://localhost:8080/playlist/my')
+
+    const list = res.data.data || []
+
+    createdPlaylists.value = list.map(item => ({
+      id: item.id,
+      name: item.name,
+      cover: item.coverUrl,
+      count: 0 // 暂时占位，后续可补歌曲数量
+    }))
+  } catch (e) {
+    console.error('load created playlists error:', e)
+  }
+}
+
+
+
+
+onMounted(() => {
+  loadLikedSongs()
+  loadCollectedPlaylists()
+  loadHistorySongs()
+  loadCreatedPlaylists()
+})
 </script>
 
 <style scoped>

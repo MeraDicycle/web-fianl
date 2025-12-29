@@ -89,5 +89,10 @@ public class PlaylistServiceImpl implements PlaylistService {
 
         return result;
     }
+
+    @Override
+    public List<Playlist> listByUserId(Long userId) {
+        return playlistMapper.selectByUserId(userId);
+    }
 }
 
