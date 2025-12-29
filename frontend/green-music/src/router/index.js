@@ -8,7 +8,7 @@ import ExploreHome from '../views/explore/ExploreHome.vue'
 import ExplorePlaylist from '../views/explore/ExplorePlaylist.vue'
 import ExploreRank from '../views/explore/ExploreRank.vue'
 import ExplorePlaylistDetail from '../views/explore/ExplorePlaylistDetail.vue'
-import SongDetail from '../views/explore/songDetail.vue'
+import SongDetail from '../views/explore/SongDetail.vue'
 import MyPlaylist from '../views/MyPlaylist.vue'
 
 const routes = [

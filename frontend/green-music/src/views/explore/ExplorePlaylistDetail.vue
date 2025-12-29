@@ -67,65 +67,75 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted} from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import axios from 'axios'
+
 const router = useRouter()
+const route = useRoute()
 
 const hoverIndex = ref(-1)
-
 
 const goSongDetail = (id) => {
   router.push(`/explore-music/song-detail/${id}`)
 }
+const playlist = ref({
+  cover: '',
+  title: '',
+  creator: '',
+  tags: [],
+  collectCount: 0,
+  commentCount: 0
+})
+const songs = ref([])
 
-const playlist = {
-  cover: 'https://picsum.photos/300?playlist',
-  title: '抖音流行热歌 | 听一遍就上瘾',
-  creator: '星野一',
-  tags: ['背景音乐', '流行'],
-  collectCount: '27.6万',
-  commentCount: 432
+const formatDuration = (sec) => {
+  if (!sec && sec !== 0) return ''
+  const m = Math.floor(sec / 60)
+  const s = sec % 60
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
 }
 
-const songs = [
-  {
-    id: 1,
-    name: '善后',
-    artist: '马师傅',
-    album: '善后',
-    duration: '04:14',
-    vip: true
-  },
-  {
-    id: 2,
-    name: '黑白的海',
-    artist: '小心空隙 Mind The',
-    album: '白鸟投林！',
-    duration: '04:44'
-  },
-  {
-    id: 3,
-    name: '有时候想变成一只猫 (Live)',
-    artist: '张靓颖',
-    album: '音乐缘计划2 第8期',
-    duration: '03:41'
-  },
-  {
-    id: 4,
-    name: '直行不转弯（说不通的谎言）',
-    artist: '头不疼',
-    album: '直行不转弯',
-    duration: '03:30'
-  },
-  {
-    id: 5,
-    name: 'You Still',
-    artist: 'Lunar Rey',
-    album: 'You Still',
-    duration: '02:14',
-    vip: true
+const loadPlaylistDetail = async () => {
+  try {
+    const id = route.params.id
+
+    const res = await axios.get(`http://localhost:8080/playlist/${id}`)
+
+    const data = res.data.data
+
+    /* 歌单信息映射 */
+    playlist.value = {
+      cover: data.playlist.coverUrl,
+      title: data.playlist.name,
+      creator: `用户 ${data.playlist.userId}`, // 当前接口没返回昵称，先占位
+      tags: data.playlist.category
+        ? [data.playlist.category]
+        : [],
+      collectCount: data.playlist.liked ? 1 : 0, // 占位
+      commentCount: 0
+    }
+
+    /* 歌曲列表映射 */
+    songs.value = data.musicList.map(item => ({
+      id: item.id,
+      name: item.title,
+      artist: item.artist,
+      album: '-', // 后端未提供
+      duration: formatDuration(item.durationSec),
+      vip: false
+    }))
+  } catch (e) {
+    console.error('load playlist detail error:', e)
+    songs.value = []
   }
-]
+}
+
+onMounted(() => {
+  loadPlaylistDetail()
+})
+
+
 </script>
 
 <style scoped>
