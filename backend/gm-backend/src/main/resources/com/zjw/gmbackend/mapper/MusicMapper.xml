@@ -65,6 +65,14 @@
             limit 20
     </select>
 
+    <select id="selectRankList" resultType="com.zjw.gmbackend.pojo.Music">
+        select *
+        from music
+        order by id desc
+            limit 50
+    </select>
+
+
 
 
 </mapper>

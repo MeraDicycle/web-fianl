@@ -23,9 +23,9 @@
           <span>收藏量：{{ playlist.collectCount }}</span>
         </div>
 
-        <div class="actions">
-          <button class="btn">♡ 收藏</button>
-        </div>
+        <button class="btn" @click="togglePlaylistLike">
+          {{ playlist.liked ? '♥ 已收藏' : '♡ 收藏' }}
+        </button>
       </div>
     </div>
 
@@ -85,7 +85,8 @@ const playlist = ref({
   creator: '',
   tags: [],
   collectCount: 0,
-  commentCount: 0
+  commentCount: 0,
+  liked: false,
 })
 const songs = ref([])
 
@@ -113,7 +114,8 @@ const loadPlaylistDetail = async () => {
         ? [data.playlist.category]
         : [],
       collectCount: data.playlist.liked ? 1 : 0, // 占位
-      commentCount: 0
+      commentCount: 0,
+      liked: data.playlist.liked
     }
 
     /* 歌曲列表映射 */
@@ -130,6 +132,32 @@ const loadPlaylistDetail = async () => {
     songs.value = []
   }
 }
+
+const togglePlaylistLike = async () => {
+  try {
+    const playlistId = route.params.id
+
+    await axios.post(
+      `http://localhost:8080/favorite/playlist/${playlistId}`
+    )
+
+    // ⭐ 立刻更新前端状态（不等后端再查）
+    playlist.value.liked = !playlist.value.liked
+
+    // 收藏数简单联动（占位）
+    if (playlist.value.liked) {
+      playlist.value.collectCount += 1
+    } else {
+      playlist.value.collectCount = Math.max(
+        0,
+        playlist.value.collectCount - 1
+      )
+    }
+  } catch (e) {
+    console.error('toggle playlist like error:', e)
+  }
+}
+
 
 onMounted(() => {
   loadPlaylistDetail()

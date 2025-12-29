@@ -43,4 +43,10 @@ public class MusicServiceImpl implements MusicService {
     public List<Music> listByTag(String tag) {
         return musicMapper.selectByTag(tag);
     }
+
+    @Override
+    public List<Music> getRankList() {
+        return musicMapper.selectRankList();
+    }
+
 }

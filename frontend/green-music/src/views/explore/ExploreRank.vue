@@ -3,16 +3,8 @@
 
     <!-- 榜单头部 -->
     <div class="rank-header">
-      <h1 class="title">{{currentRankTitle}}</h1>
+      <h1 class="title">新歌榜</h1>
       <span class="date">2025-12-18</span>
-    </div>
-
-    <!-- 榜单切换 -->
-    <div class="rank-tabs">
-      <div v-for="tab in rankTabs" :key="tab.key" class="rank-tab" :class="{ active: currentRank === tab.key }"
-        @click="currentRank = tab.key">
-        {{ tab.name }}
-      </div>
     </div>
 
     <!-- 表头 -->
@@ -49,63 +41,46 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
+
 const router = useRouter()
+const songs = ref([])
 
-const rankTabs = [
-  { key: 'hot', name: '🔥 热歌榜' },
-  { key: 'pop', name: '🎧 流行指数榜' },
-  { key: 'new', name: '🆕 新歌榜' },
-]
-
-const currentRank = ref('hot')
-
-const rankData = {
-  hot: [
-    {
-      id: 1,
-      name: '左转灯 (1000 Times +1)',
-      artist: '汪苏泷 / Eric周兴哲',
-      duration: '03:14',
-      cover: 'https://picsum.photos/80?1'
-    },
-    {
-      id: 2,
-      name: '原来是这样～',
-      artist: '周深',
-      duration: '03:30',
-      cover: 'https://picsum.photos/80?2'
-    },
-  ],
-  pop: [
-    {
-      id: 3,
-      name: '孤独患者',
-      artist: '陈奕迅',
-      duration: '04:02',
-      cover: 'https://picsum.photos/80?3'
-    }
-  ],
-  new: [
-    {
-      id: 4,
-      name: '新世界',
-      artist: '华晨宇',
-      duration: '03:58',
-      cover: 'https://picsum.photos/80?4'
-    }
-  ]
+const formatDuration = (sec) => {
+  if (!sec && sec !== 0) return ''
+  const m = Math.floor(sec / 60)
+  const s = sec % 60
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
 }
 
-const songs = computed(() => rankData[currentRank.value])
-const currentRankTitle = computed(() => {
-  return rankTabs.find(tab => tab.key === currentRank.value)?.name || ''
-})
+const loadRank = async () => {
+  try {
+    const res = await axios.get('http://localhost:8080/rank')
+    const list = res.data.data || []
+
+    songs.value = list.map(item => ({
+      id: item.id,
+      name: item.title,
+      artist: item.artist,
+      cover: item.coverUrl,
+      duration: formatDuration(item.durationSec)
+    }))
+  } catch (e) {
+    console.error('load rank error:', e)
+  }
+}
+
 const goSongDetail = (id) => {
   router.push(`/explore-music/song-detail/${id}`)
 }
+
+onMounted(() => {
+  loadRank()
+})
 </script>
+
 
 
 <style scoped>
@@ -136,33 +111,6 @@ const goSongDetail = (id) => {
   border-radius: 6px;
   cursor: pointer;
 }
-
-
-.rank-tabs {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.rank-tab {
-  padding: 8px 18px;
-  border-radius: 20px;
-  background: #f0f0f0;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.rank-tab:hover {
-  background: #eaf7f0;
-}
-
-.rank-tab.active {
-  background: #1db954;
-  color: #fff;
-  font-weight: 600;
-}
-
 
 /* 表头 */
 .rank-table-header {

@@ -11,4 +11,6 @@ public interface MusicService {
     Music getMusicDetail(Long musicId);
 
     List<Music> listByTag(String tag);
+
+    public List<Music> getRankList();
 }

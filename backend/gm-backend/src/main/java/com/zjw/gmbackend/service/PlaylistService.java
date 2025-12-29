@@ -16,4 +16,8 @@ public interface PlaylistService {
     Object list(String category, Integer page, Integer size);
 
     List<Playlist> listByUserId(Long userId);
+
+    public boolean existsMusic(Long playlistId, Long musicId);
+
+    public void deletePlaylist(Long playlistId, Long userId);
 }

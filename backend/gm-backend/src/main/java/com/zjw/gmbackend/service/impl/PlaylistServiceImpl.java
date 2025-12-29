@@ -52,10 +52,10 @@ public class PlaylistServiceImpl implements PlaylistService {
     public void createPlaylist(Playlist playlist) {
         // TODO：等你做 JWT 之后，这里从 UserContext 拿 userId
         // Long userId = UserContext.getUserId();
-        // playlist.setUserId(userId);
-
-        playlist.setCreatedTime(LocalDateTime.now());
-        playlistMapper.insert(playlist);
+         Long userId = 101L;
+         playlist.setUserId(userId);
+         playlist.setCreatedTime(LocalDateTime.now());
+         playlistMapper.insert(playlist);
     }
 
     @Override
@@ -94,5 +94,27 @@ public class PlaylistServiceImpl implements PlaylistService {
     public List<Playlist> listByUserId(Long userId) {
         return playlistMapper.selectByUserId(userId);
     }
+
+    public boolean existsMusic(Long playlistId, Long musicId) {
+        Integer count = playlistMapper.existsMusic(playlistId, musicId);
+        return count != null && count > 0;
+    }
+
+    @Override
+    public void deletePlaylist(Long playlistId, Long userId) {
+        Playlist playlist = playlistMapper.selectById(playlistId);
+        if (playlist == null) return;
+
+        if (!playlist.getUserId().equals(userId)) {
+            throw new RuntimeException("无权删除该歌单");
+        }
+
+        // 先删关联歌曲
+        playlistMapper.deleteAllPlaylistMusic(playlistId);
+        // 再删歌单
+        playlistMapper.deleteById(playlistId);
+    }
+
+
 }
 

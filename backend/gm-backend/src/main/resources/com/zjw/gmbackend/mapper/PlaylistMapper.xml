@@ -116,6 +116,15 @@
         order by id desc
     </select>
 
+    <delete id="deleteAllPlaylistMusic">
+        delete from playlist_music where playlist_id = #{playlistId}
+    </delete>
+
+    <delete id="deleteById">
+        delete from playlist where id = #{id}
+    </delete>
+
+
 
 
 </mapper>

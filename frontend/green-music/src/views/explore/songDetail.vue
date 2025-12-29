@@ -24,16 +24,20 @@
 
         <div class="actions">
           <button class="play">▶ 播放</button>
-          <button class="btn">♡ 收藏</button>
+          <button class="btn" @click="toggleLike">
+            {{ song.liked ? '♥ 已收藏' : '♡ 收藏' }}
+          </button>
           <button class="btn" @click="showAddTo = true" @click.stop>➕添加到</button>
 
           <div v-if="showAddTo" class="add-to-popover show">
             <div class="popover-header">播放列表</div>
 
             <div class="playlist-list">
-              <div class="playlist-item" v-for="pl in myPlaylists" :key="pl.id" @click="addToPlaylist(pl)">
+              <div class="playlist-item" v-for="pl in myPlaylists" :key="pl.id" 
+              :class="{ disabled: pl.disabled }"
+              @click="!pl.disabled && addToPlaylist(pl)">
                 <span>{{ pl.name }}</span>
-                <span class="count">{{ pl.count }} 首</span>
+                <!-- <span class="count">{{ pl.count }} 首</span> -->
               </div>
             </div>
 
@@ -64,71 +68,142 @@
 
 
 <script setup>
-import { ref } from 'vue'
-const showAddTo = ref(false)
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import axios from 'axios'
 
+const route = useRoute()
+
+const showAddTo = ref(false)
+const song = ref({
+  name: '',
+  artists: '',
+  album: '-',
+  language: '-',
+  genre: '-',
+  company: '-',
+  releaseDate: '-',
+  cover: '',
+  liked: false
+})
+const lyrics = ref([])
+const myPlaylists = ref([])
+
+// 关闭“添加到歌单”浮层
 document.addEventListener('click', () => {
   showAddTo.value = false
 })
 
-const song = {
-  name: '溯 (Reverse) feat. 马吟吟',
-  artists: 'CORSAK胡梦周 / 马吟吟',
-  album: '溯 (Reverse) feat. 马吟吟',
-  language: '国语',
-  genre: 'Electronica',
-  company: 'LIQUID STATE',
-  releaseDate: '2018-07-27',
-  commentCount: 54114,
-  cover: 'https://picsum.photos/300?reverse'
+// 加载歌曲详情
+const loadSongDetail = async () => {
+  try {
+    const id = route.params.id
+
+    const res = await axios.get(`http://localhost:8080/music/${id}`)
+    const data = res.data.data
+
+    song.value = {
+      name: data.title,
+      artists: data.artist,
+      album: '-',               // 后端未提供
+      language: '-',            // 后端未提供
+      genre: data.tags || '-',  // 用 tags 兜底
+      company: '-',             // 后端未提供
+      releaseDate: '-',         // 后端未提供
+      cover: data.coverUrl,
+      liked: data.liked
+    }
+
+    lyrics.value = data.lyric
+      ? data.lyric.split('\n')
+      : ['暂无歌词']
+  } catch (e) {
+    console.error('load song detail error:', e)
+  }
 }
-const myPlaylists = ref([
-  { id: 1, name: '我喜欢的音乐', count: 32 },
-  { id: 2, name: '学习 BGM', count: 18 },
-  { id: 3, name: '夜晚循环', count: 24 }
-])
-const closeAddTo = () => {
-  showAddTo.value = false
+
+// 收藏 / 取消收藏
+const toggleLike = async () => {
+  try {
+    const id = route.params.id
+    await axios.post(`http://localhost:8080/favorite/music/${id}`)
+    song.value.liked = !song.value.liked
+  } catch (e) {
+    console.error('toggle like error:', e)
+  }
 }
-const addToPlaylist = (playlist) => {
-  console.log('添加到歌单：', playlist.name)
-  // 这里以后接后端 API
-  showAddTo.value = false
+
+onMounted(() => {
+  loadSongDetail()
+  loadMyPlaylists()
+})
+
+
+
+const addToPlaylist = async (playlist) => {
+  try {
+    const musicId = route.params.id
+
+    await axios.post(
+      `http://localhost:8080/playlist/${playlist.id}/music/${musicId}`
+    )
+
+    playlist.disabled = true
+    showAddTo.value = false
+  } catch (e) {
+    console.error('add to playlist error:', e)
+  }
 }
-const createPlaylist = () => {
+
+const createPlaylist = async () => {
   const name = prompt('请输入歌单名称')
   if (!name) return
 
-  myPlaylists.value.push({
-    id: Date.now(),
-    name,
-    count: 0
-  })
+  try {
+    await axios.post('http://localhost:8080/playlist/create', {
+      name,
+      description: '',
+      coverUrl: 'https://picsum.photos/300?new',
+      category: ''
+    })
+
+    loadMyPlaylists()
+  } catch (e) {
+    console.error('create playlist error:', e)
+  }
+}
+const loadMyPlaylists = async () => {
+  try {
+    const musicId = route.params.id
+
+    const res = await axios.get('http://localhost:8080/playlist/my')
+    const list = res.data.data || []
+
+    // 并行检查是否已加入
+    const playlists = await Promise.all(
+      list.map(async (item) => {
+        const existsRes = await axios.get(
+          `http://localhost:8080/playlist/${item.id}/music/${musicId}/exists`
+        )
+
+        return {
+          id: item.id,
+          name: item.name,
+          count: 0,
+          disabled: existsRes.data.data === true
+        }
+      })
+    )
+
+    myPlaylists.value = playlists
+  } catch (e) {
+    console.error('load my playlists error:', e)
+  }
 }
 
-const lyrics = [
-  '溯 (Reverse) feat. 马吟吟 - CORSAK胡梦周 / 马吟吟',
-  '',
-  '词：CORSAK胡梦周',
-  '曲：CORSAK胡梦周 / Gunnar Greve / Daniel James Nije / Lars Kristian Rosness / Edvard Normann / Fredrik Borch Olsen',
-  'Produced by：CORSAK胡梦周 / Mere Music',
-  'Executive produced by：Gunnar Greve',
-  'Vocals by：CORSAK胡梦周 / 马吟吟',
-  'Vocal recording：刘俊杰',
-  'Recorded at：MER Studio / SMG Studio Shanghai',
-  'Mixed by：Joakim Soderstrom',
-  'Mastering by：Bjorn Engelmann at Cuttingroom',
-  '',
-  '总想要透过你眼睛',
-  '去找寻最原始的野性',
-  '没想到最后却闯进',
-  '一整座森林的宁静',
-  '',
-  '你呼吸',
-  '靠近',
-  '我屏住呼吸'
-]
+
 </script>
+
 
 <style scoped>
 .song-detail-page {
@@ -239,6 +314,7 @@ const lyrics = [
     opacity 0.18s ease-out,
     transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
 }
+
 .add-to-popover.show {
   opacity: 1;
   transform: translateY(0) scale(1);
@@ -251,7 +327,7 @@ const lyrics = [
   border-bottom: 1px solid #eee;
 }
 
-.popover-header:hover{
+.popover-header:hover {
   background: #f5f7f9;
 }
 
@@ -269,6 +345,15 @@ const lyrics = [
 
 .playlist-item:hover {
   background: #f5f7f9;
+}
+
+.playlist-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.playlist-item.disabled:hover {
+  background: transparent;
 }
 
 .create-playlist {

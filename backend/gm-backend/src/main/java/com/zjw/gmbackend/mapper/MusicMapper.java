@@ -19,4 +19,7 @@ public interface MusicMapper {
 
     List<Music> selectHistoryMusic(@Param("userId") Long userId);
 
+    List<Music> selectRankList();
+
+
 }

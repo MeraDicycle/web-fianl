@@ -52,6 +52,23 @@ public class PlaylistController {
         return Result.success(playlistService.listByUserId(userId));
     }
 
+    @GetMapping("/{playlistId}/music/{musicId}/exists")
+    public Result existsMusic(
+            @PathVariable Long playlistId,
+            @PathVariable Long musicId
+    ) {
+        boolean exists = playlistService.existsMusic(playlistId, musicId);
+        return Result.success(exists);
+    }
+
+    @DeleteMapping("/{playlistId}")
+    public Result deletePlaylist(@PathVariable Long playlistId) {
+        Long userId = 101L;
+        playlistService.deletePlaylist(playlistId, userId);
+        return Result.success();
+    }
+
+
 
 
 }

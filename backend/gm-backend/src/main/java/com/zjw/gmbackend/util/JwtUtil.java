@@ -1,2 +1,4 @@
-package com.zjw.gmbackend.util;public class JwtUtil {
+package com.zjw.gmbackend.util;
+
+public class JwtUtil {
 }

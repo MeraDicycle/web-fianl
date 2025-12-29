@@ -36,5 +36,9 @@ public interface PlaylistMapper {
 
     List<Playlist> selectByUserId(@Param("userId") Long userId);
 
+    void deleteById(Long id);
+    void deleteAllPlaylistMusic(Long playlistId);
+
+
 }
 
