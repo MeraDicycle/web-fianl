@@ -86,7 +86,7 @@ const goLogin = () => {
 <style scoped>
 .auth-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1db954, #1ed760);
+  background: linear-gradient(135deg, #e8f5e9, #ffffff);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -114,7 +114,7 @@ const goLogin = () => {
 }
 
 .input {
-  width: 100%;
+  width: 90%;
   height: 42px;
   margin-bottom: 14px;
   padding: 0 12px;
