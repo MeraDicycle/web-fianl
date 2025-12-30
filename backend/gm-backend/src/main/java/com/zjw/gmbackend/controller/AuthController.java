@@ -47,4 +47,14 @@ public class AuthController {
 
         return Result.success(data);
     }
+
+    @PostMapping("/register")
+    public Result register(@RequestBody User user) {
+        try {
+            userService.register(user);
+            return Result.success();
+        } catch (RuntimeException e) {
+            return Result.error(e.getMessage());
+        }
+    }
 }

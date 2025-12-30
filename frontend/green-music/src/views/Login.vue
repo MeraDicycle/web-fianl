@@ -36,7 +36,7 @@
       <!-- 底部 -->
       <div class="footer">
         <span>还没有账号？</span>
-        <span class="link">去注册</span>
+        <span class="link" @click="goRegister">去注册</span>
       </div>
     </div>
   </div>
@@ -82,13 +82,20 @@ const login = async () => {
     localStorage.setItem('user', JSON.stringify(user))
 
     // 登录成功，跳转首页（你可以改成 /explore-music）
-    router.push('/explore-music')
+    const redirect = router.currentRoute.value.query.redirect
+    router.push(redirect || '/explore-music')
+
 
   } catch (e) {
     errorMsg.value = '服务器异常，请稍后再试'
     console.error(e)
   }
 }
+
+const goRegister = () =>{
+    router.push(`/register`)
+}
+
 </script>
 
 <style scoped>

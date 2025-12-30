@@ -1,12 +1,11 @@
 package com.zjw.gmbackend.controller;
 
 import com.zjw.gmbackend.pojo.Result;
+import com.zjw.gmbackend.pojo.User;
 import com.zjw.gmbackend.service.UserService;
 import com.zjw.gmbackend.util.UserContext;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -24,5 +23,7 @@ public class UserController {
 //        return Result.success(userService.listHistory(MOCK_USER_ID));
         return Result.success(userService.listHistory(userId));
     }
+
+
 }
 

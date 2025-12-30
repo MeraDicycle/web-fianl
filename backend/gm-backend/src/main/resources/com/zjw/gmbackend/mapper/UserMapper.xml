@@ -19,4 +19,22 @@
             limit 1
     </select>
 
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into user (
+            username,
+            password,
+            nickname,
+            avatar_url,
+            role,
+            created_time
+        ) values (
+                     #{username},
+                     #{password},
+                     #{nickname},
+                     #{avatarUrl},
+                     #{role},
+                     #{createdTime}
+                 )
+    </insert>
+
 </mapper>

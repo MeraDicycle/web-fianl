@@ -11,6 +11,7 @@ import ExplorePlaylistDetail from '../views/explore/ExplorePlaylistDetail.vue'
 import SongDetail from '../views/explore/SongDetail.vue'
 import MyPlaylist from '../views/MyPlaylist.vue'
 import Login from '../views/Login.vue'
+import Register from '../views/Register.vue'
 
 const routes = [
     {
@@ -19,26 +20,68 @@ const routes = [
         redirect: '/explore-music',
         children: [
             { path: 'search-music', component: Search },
-            { path: 'explore-music', component: ExploreLayout,  redirect: '/explore-music/home',
+
+            {
+                path: 'explore-music',
+                component: ExploreLayout,
+                redirect: '/explore-music/home',
                 children: [
-                    {path: 'home', component: ExploreHome},
-                    {path: 'playlist', component: ExplorePlaylist},
-                    {path: 'playlist/:id', component: ExplorePlaylistDetail},
-                    {path: 'rank', component: ExploreRank},
-                    {path: 'song-detail/:id', component: SongDetail},
+                    { path: 'home', component: ExploreHome },
+                    { path: 'playlist', component: ExplorePlaylist },
+                    { path: 'playlist/:id', component: ExplorePlaylistDetail },
+                    { path: 'rank', component: ExploreRank },
+                    { path: 'song-detail/:id', component: SongDetail },
                 ]
             },
-            { path: 'my-music', component: MyMusic },
-            { path: 'my-playlist/:id', component: MyPlaylist },
+
+            {
+                path: 'my-music',
+                component: MyMusic,
+                meta: { requiresAuth: true }
+            },
+            {
+                path: 'my-playlist/:id',
+                component: MyPlaylist,
+                meta: { requiresAuth: true }
+            }
         ]
-    },    {
-    path: '/login', component: Login
+    },
+
+    {
+        path: '/login',
+        component: Login
+    },
+    {
+        path: '/register',
+        component: Register
     }
 ]
+
 
 const router = createRouter({
     history: createWebHistory(),
     routes
 })
+
+router.beforeEach((to, from, next) => {
+    // 是否需要登录
+    const requiresAuth = to.matched.some(
+        record => record.meta.requiresAuth
+    )
+
+    // 是否已登录（你现在的判定方式）
+    const token = localStorage.getItem('token')
+
+    // 需要登录，但没 token
+    if (requiresAuth && !token) {
+        next({
+            path: '/login',
+            query: { redirect: to.fullPath } // 登录后跳回原页面
+        })
+    } else {
+        next()
+    }
+})
+
 
 export default router
