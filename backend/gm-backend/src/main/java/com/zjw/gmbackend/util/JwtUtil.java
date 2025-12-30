@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 public class JwtUtil {
@@ -15,34 +16,32 @@ public class JwtUtil {
     // token 有效期（7 天）
     private static final long EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000L;
 
-    /**
-     * 生成 token
-     */
+    private static byte[] keyBytes() {
+        return SECRET_KEY.getBytes(StandardCharsets.UTF_8);
+    }
+
     public static String generateToken(Long userId, String username) {
         return Jwts.builder()
                 .setSubject(username)
                 .claim("userId", userId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRE_TIME))
-                .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()), SignatureAlgorithm.HS256)
+                .signWith(
+                        Keys.hmacShaKeyFor(keyBytes()),
+                        SignatureAlgorithm.HS256
+                )
                 .compact();
     }
 
-    /**
-     * 解析 token
-     */
     public static Claims parseToken(String token) {
-        return Jwts.parser()
-                .setSigningKey(SECRET_KEY)
+        return Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(keyBytes()))
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
 
-    /**
-     * 从 token 中取 userId
-     */
     public static Long getUserId(String token) {
-        Claims claims = parseToken(token);
-        return claims.get("userId", Long.class);
+        return parseToken(token).get("userId", Long.class);
     }
 }

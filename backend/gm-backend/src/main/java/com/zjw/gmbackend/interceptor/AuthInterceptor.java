@@ -18,6 +18,11 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
+        System.out.println("====== AuthInterceptor ======");
+        System.out.println("URI = " + request.getRequestURI());
+        System.out.println("Method = " + request.getMethod());
+        System.out.println("Authorization = [" + request.getHeader("Authorization") + "]");
+
         // 1) 放行 OPTIONS（跨域预检）
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             return true;
@@ -52,9 +57,11 @@ public class AuthInterceptor implements HandlerInterceptor {
 
             // 5) 放入 UserContext
             UserContext.setUserId(userId);
+//            System.out.println(userId);
             return true;
 
         } catch (JwtException e) {
+            e.printStackTrace();
             // token 过期、签名不对、格式不对都会进来
             writeUnauthorized(response, "未登录：token 无效或已过期");
             return false;
