@@ -3,6 +3,7 @@ package com.zjw.gmbackend.controller;
 import com.zjw.gmbackend.pojo.Playlist;
 import com.zjw.gmbackend.pojo.Result;
 import com.zjw.gmbackend.service.PlaylistService;
+import com.zjw.gmbackend.util.UserContext;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,8 +48,8 @@ public class PlaylistController {
 
     @GetMapping("/my")
     public Result listMyPlaylist() {
-        // Long userId = UserContext.getUserId();
-        Long userId = 101L;
+         Long userId = UserContext.getUserId();
+//        Long userId = 101L;
         return Result.success(playlistService.listByUserId(userId));
     }
 
@@ -63,7 +64,8 @@ public class PlaylistController {
 
     @DeleteMapping("/{playlistId}")
     public Result deletePlaylist(@PathVariable Long playlistId) {
-        Long userId = 101L;
+//        Long userId = 101L;
+        Long userId = UserContext.getUserId();
         playlistService.deletePlaylist(playlistId, userId);
         return Result.success();
     }

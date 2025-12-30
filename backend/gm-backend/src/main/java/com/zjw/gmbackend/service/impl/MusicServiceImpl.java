@@ -4,6 +4,7 @@ import com.zjw.gmbackend.mapper.FavoriteMapper;
 import com.zjw.gmbackend.mapper.MusicMapper;
 import com.zjw.gmbackend.pojo.Music;
 import com.zjw.gmbackend.service.MusicService;
+import com.zjw.gmbackend.util.UserContext;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +31,8 @@ public class MusicServiceImpl implements MusicService {
         }
 
         // 2. 查询是否已收藏
-        Long userId = 101L;
-//        Long userId = UserContext.getUserId();
+//        Long userId = 101L;
+        Long userId = UserContext.getUserId();
 
         Integer count = favoriteMapper.exists(userId, 1, musicId);
         music.setLiked(count > 0);
