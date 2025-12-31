@@ -24,6 +24,29 @@ public class UserController {
         return Result.success(userService.listHistory(userId));
     }
 
+    @PutMapping("/profile")
+    public Result updateProfile(@RequestBody User req) {
+
+        Long userId = UserContext.getUserId();
+
+        userService.updateProfile(
+                userId,
+                req.getNickname(),
+                req.getAvatarUrl()
+        );
+
+        return Result.success();
+    }
+
+    /**
+     * 获取当前用户信息（前端初始化用）
+     */
+    @GetMapping("/me")
+    public Result me() {
+        Long userId = UserContext.getUserId();
+        return Result.success(userService.getById(userId));
+    }
+
 
 }
 

@@ -11,7 +11,12 @@
             </el-icon></div>
           <div class="uid">ID：{{ user.id }}</div>
         </div>
+        <div class="actions">
+          <button class="btn logout" @click="logout">退出登录</button>
+        </div>
+
       </div>
+
 
       <div class="nav">
         <span v-for="item in tabs" :key="item.key" :class="['nav-item', { active: activeTab === item.key }]"
@@ -65,20 +70,20 @@
 
       <!-- 播放历史 -->
       <div v-if="activeTab === 'history'">
-      <div class="table-header">
-        <span>歌曲</span>
-        <span>歌手</span>
-        <span>专辑</span>
-        <span>时长</span>
-      </div>
+        <div class="table-header">
+          <span>歌曲</span>
+          <span>歌手</span>
+          <span>专辑</span>
+          <span>时长</span>
+        </div>
 
-      <div class="song-row" v-for="(song, index) in historySongs" :key="song.id" @click="goSongDetail(song.id)">
-        <span>{{ index + 1 }}. {{ song.name }}</span>
-        <span>{{ song.artist }}</span>
-        <span>{{ song.album }}</span>
-        <span>{{ song.duration }}</span>
+        <div class="song-row" v-for="(song, index) in historySongs" :key="song.id" @click="goSongDetail(song.id)">
+          <span>{{ index + 1 }}. {{ song.name }}</span>
+          <span>{{ song.artist }}</span>
+          <span>{{ song.album }}</span>
+          <span>{{ song.duration }}</span>
+        </div>
       </div>
-    </div>
     </div>
 
 
@@ -119,21 +124,18 @@ import { Setting } from '@element-plus/icons-vue'
 import axios from 'axios'
 const router = useRouter()
 
-const user = ref({
-  id: 10001,
-  nickname: '蔡健雅',
-  avatar: 'https://picsum.photos/120'
-})
-
 const tabs = [
   { key: 'like', label: '我喜欢' },
   { key: 'collect', label: '收藏的歌单' },
   { key: 'create', label: '我创建的歌单' },
   { key: 'history', label: '播放历史' }
 ]
-
-const activeTab = ref('like') 
-
+const user = ref({
+  id: null,
+  nickname: '',
+  avatar: ''
+})
+const activeTab = ref('like')
 const likedSongs = ref([])
 const collectedPlaylists = ref([])
 const createdPlaylists = ref([])
@@ -161,12 +163,43 @@ const openEdit = () => {
   editForm.value.avatar = user.value.avatar
   showEdit.value = true
 }
-/* 保存修改 */
-const saveProfile = () => {
-  user.value.nickname = editForm.value.nickname
-  user.value.avatar = editForm.value.avatar
-  showEdit.value = false
+
+const logout = () => {
+  const ok = confirm('确定要退出登录吗？')
+  if (!ok) return
+
+  // 1️⃣ 清 token
+  localStorage.removeItem('token')
+
+  // 2️⃣ 可选：清本地用户状态
+  user.value = {
+    id: null,
+    nickname: '',
+    avatar: ''
+  }
+
+  // 3️⃣ 跳转登录页
+  router.push('/login')
 }
+/* 保存修改 */
+const saveProfile = async () => {
+  try {
+    await axios.put('http://localhost:8080/user/profile', {
+      nickname: editForm.value.nickname,
+      avatarUrl: editForm.value.avatar
+    })
+
+    // 本地同步更新
+    user.value.nickname = editForm.value.nickname
+    user.value.avatar = editForm.value.avatar
+
+    showEdit.value = false
+  } catch (e) {
+    alert('保存失败')
+    console.error(e)
+  }
+}
+
 
 // 秒 → mm:ss
 const formatDuration = (sec) => {
@@ -174,6 +207,21 @@ const formatDuration = (sec) => {
   const m = Math.floor(sec / 60)
   const s = sec % 60
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+}
+
+const loadUserInfo = async () => {
+  try {
+    const res = await axios.get('http://localhost:8080/user/me')
+    const data = res.data.data
+
+    user.value = {
+      id: data.id,
+      nickname: data.nickname,
+      avatar: data.avatarUrl
+    }
+  } catch (e) {
+    console.error('load user info error', e)
+  }
 }
 
 const loadLikedSongs = async () => {
@@ -257,6 +305,7 @@ onMounted(() => {
   loadCollectedPlaylists()
   loadHistorySongs()
   loadCreatedPlaylists()
+  loadUserInfo()
 })
 </script>
 

@@ -10,5 +10,7 @@ public interface UserService {
     List<Music> listHistory(Long userId);
     User findByUsername(String username);
     void register(User user);
+    void updateProfile(Long userId, String nickname, String avatarUrl);
+    User getById(Long userId);
 }
 

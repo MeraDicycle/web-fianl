@@ -37,4 +37,20 @@
                  )
     </insert>
 
+    <update id="updateProfile">
+        update user
+        set
+            nickname = #{nickname},
+            avatar_url = #{avatarUrl}
+        where id = #{id}
+    </update>
+
+    <select id="selectById"
+            resultType="com.zjw.gmbackend.pojo.User">
+        select *
+        from user
+        where id = #{id}
+            limit 1
+    </select>
+
 </mapper>

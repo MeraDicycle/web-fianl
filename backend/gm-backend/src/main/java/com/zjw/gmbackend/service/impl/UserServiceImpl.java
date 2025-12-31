@@ -57,5 +57,21 @@ public class UserServiceImpl implements UserService {
         // 5️⃣ 入库
         userMapper.insert(user);
     }
+
+    @Override
+    public void updateProfile(Long userId, String nickname, String avatarUrl) {
+
+        User user = new User();
+        user.setId(userId);
+        user.setNickname(nickname);
+        user.setAvatarUrl(avatarUrl);
+
+        userMapper.updateProfile(user);
+    }
+
+    @Override
+    public User getById(Long userId) {
+        return userMapper.selectById(userId);
+    }
 }
 
