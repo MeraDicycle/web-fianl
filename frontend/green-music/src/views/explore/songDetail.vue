@@ -91,6 +91,8 @@ const song = ref({
 })
 const lyrics = ref([])
 const myPlaylists = ref([])
+const rawSong = ref(null)
+
 
 // 关闭“添加到歌单”浮层
 document.addEventListener('click', () => {
@@ -105,7 +107,9 @@ const loadSongDetail = async () => {
     const res = await axios.get(`http://localhost:8080/music/${id}`)
     const data = res.data.data
 
+
     song.value = {
+      id: id,
       name: data.title,
       artists: data.artist,
       album: '-',               // 后端未提供
@@ -116,6 +120,7 @@ const loadSongDetail = async () => {
       cover: data.coverUrl,
       liked: data.liked
     }
+    console.log(song.value.id)
 
     lyrics.value = data.lyric
       ? data.lyric.split('\n')

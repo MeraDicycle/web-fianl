@@ -12,5 +12,6 @@ public interface UserService {
     void register(User user);
     void updateProfile(Long userId, String nickname, String avatarUrl);
     User getById(Long userId);
+    void addHistory(Long userId, Long musicId);
 }
 

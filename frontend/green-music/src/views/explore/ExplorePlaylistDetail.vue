@@ -23,6 +23,10 @@
           <span>收藏量：{{ playlist.collectCount }}</span>
         </div>
 
+        <!-- <button class="btn play-all" @click="playAll">
+          ▶ 播放全部
+        </button> -->
+
         <button class="btn" @click="togglePlaylistLike">
           {{ playlist.liked ? '♥ 已收藏' : '♡ 收藏' }}
         </button>
@@ -39,17 +43,13 @@
         <span class="col-duration">时长</span>
       </div>
 
-      <div
-        class="song-row"
-        v-for="(song, index) in songs"
-        :key="song.id"
-        @mouseenter="hoverIndex = index"
-        @mouseleave="hoverIndex = -1"
-        @click="goSongDetail(song.id)"
-      >
+      <div class="song-row" v-for="(song, index) in songs" :key="song.id" @mouseenter="hoverIndex = index"
+        @mouseleave="hoverIndex = -1" @click="goSongDetail(song.id)">
         <span class="col-index">
           <span v-if="hoverIndex !== index">{{ index + 1 }}</span>
-          <span v-else class="play-icon">▶</span>
+          <span v-else class="play-icon" @click.stop="playFromPlaylist(song)">
+            ▶
+          </span>
         </span>
 
         <span class="col-name">
@@ -67,9 +67,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted} from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
+import { usePlayerStore } from '../../store/player'
+
+const playerStore = usePlayerStore()
+
 
 const router = useRouter()
 const route = useRoute()
@@ -105,8 +109,6 @@ const loadPlaylistDetail = async () => {
 
     const data = res.data.data
 
-    console.log(data.liked)
-
     /* 歌单信息映射 */
     playlist.value = {
       cover: data.playlist.coverUrl,
@@ -127,7 +129,8 @@ const loadPlaylistDetail = async () => {
       artist: item.artist,
       album: '-', // 后端未提供
       duration: formatDuration(item.durationSec),
-      vip: false
+      vip: false,
+      cover: item.coverUrl  
     }))
   } catch (e) {
     console.error('load playlist detail error:', e)
@@ -159,6 +162,11 @@ const togglePlaylistLike = async () => {
     console.error('toggle playlist like error:', e)
   }
 }
+
+const playFromPlaylist = (song) => {
+  playerStore.play(song, songs.value)
+}
+
 
 
 onMounted(() => {
@@ -237,6 +245,7 @@ onMounted(() => {
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
 }
+
 .btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgb(0, 0, 0, 0.15)
@@ -287,6 +296,3 @@ onMounted(() => {
   border-radius: 4px;
 }
 </style>
-
-
-

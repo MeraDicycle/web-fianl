@@ -53,4 +53,30 @@
             limit 1
     </select>
 
+    <insert id="insertHistory">
+        insert into history (user_id, music_id, play_time)
+        values (#{userId}, #{musicId}, now())
+    </insert>
+
+    <delete id="deleteByUserAndMusic">
+        delete from history
+        where user_id = #{userId}
+          and music_id = #{musicId}
+    </delete>
+
+    <!-- 只保留最近 limit 条 -->
+    <delete id="deleteExceedLimit">
+        delete from history
+        where user_id = #{userId}
+          and id not in (
+            select id from (
+                               select id
+                               from history
+                               where user_id = #{userId}
+                               order by play_time desc
+                                   limit #{limit}
+                           ) t
+        )
+    </delete>
+
 </mapper>

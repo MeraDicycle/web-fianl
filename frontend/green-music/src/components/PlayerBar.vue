@@ -10,13 +10,14 @@
     </div>
 
     <!-- 中间：控制 -->
-    <div class="center">
-      <button>⏮</button>
-      <button class="play" @click="toggle">
-        {{ isPlaying ? '⏸' : '▶' }}
-      </button>
-      <button>⏭</button>
-    </div>
+<div class="center">
+  <button @click="prev">⏮</button>
+  <button class="play" @click="toggle">
+    {{ isPlaying ? '⏸' : '▶' }}
+  </button>
+  <button @click="next">⏭</button>
+</div>
+
 
     <!-- 右侧 -->
     <div class="right">
@@ -38,6 +39,7 @@
 <script setup>
 import { ref, watch, computed  } from 'vue'
 import { usePlayerStore } from '../store/player.js'
+import axios from 'axios'
 
 const playerStore = usePlayerStore()
 const audioRef = ref(null)
@@ -66,12 +68,15 @@ watch(
   () => playerStore.isPlaying,
   (val) => {
     if (!audioRef.value) return
-    val ? audioRef.value.play() : audioRef.value.pause()
+    if (!val) {
+      audioRef.value.pause()
+    }
   }
 )
 
+
 const onEnded = () => {
-  playerStore.isPlaying = false
+  playerStore.next()
 }
 
 let lastRecordedId = null
@@ -79,6 +84,7 @@ let lastRecordedId = null
 const onPlay = () => {
   const song = currentSong.value
   if (!song) return
+  console.log(song.id)
 
   // 防止同一首歌重复记录
   if (song.id === lastRecordedId) return
@@ -86,8 +92,16 @@ const onPlay = () => {
   lastRecordedId = song.id
 
   // ✅ 真正开始播放，记录历史
-  // api.addHistory(song.id)
+  axios.post(`/user/history/${song.id}`)
 }
+const prev = () => {
+  playerStore.prev()
+}
+
+const next = () => {
+  playerStore.next()
+}
+
 </script>
 
 <style scoped>

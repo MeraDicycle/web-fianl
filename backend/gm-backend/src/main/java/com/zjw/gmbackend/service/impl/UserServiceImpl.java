@@ -73,5 +73,18 @@ public class UserServiceImpl implements UserService {
     public User getById(Long userId) {
         return userMapper.selectById(userId);
     }
+
+    @Override
+    public void addHistory(Long userId, Long musicId) {
+
+        // 1. 删除同一用户下的旧记录（避免重复）
+        userMapper.deleteByUserAndMusic(userId, musicId);
+
+        // 2. 插入新记录
+        userMapper.insertHistory(userId, musicId);
+
+        // 3. 只保留最近 20 条
+        userMapper.deleteExceedLimit(userId, 20);
+    }
 }
 

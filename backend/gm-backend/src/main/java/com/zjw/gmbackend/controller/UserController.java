@@ -24,6 +24,14 @@ public class UserController {
         return Result.success(userService.listHistory(userId));
     }
 
+    /** 记录播放历史 */
+    @PostMapping("/history/{musicId}")
+    public Result addHistory(@PathVariable Long musicId) {
+        Long userId = UserContext.getUserId();
+        userService.addHistory(userId, musicId);
+        return Result.success();
+    }
+
     @PutMapping("/profile")
     public Result updateProfile(@RequestBody User req) {
 

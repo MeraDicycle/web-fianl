@@ -14,5 +14,14 @@ public interface UserMapper {
     int updateProfile(User user);
 
     User selectById(Long id);
+
+    void insertHistory(@Param("userId") Long userId,
+                @Param("musicId") Long musicId);
+
+    void deleteByUserAndMusic(@Param("userId") Long userId,
+                              @Param("musicId") Long musicId);
+
+    void deleteExceedLimit(@Param("userId") Long userId,
+                           @Param("limit") Integer limit);
 }
 
