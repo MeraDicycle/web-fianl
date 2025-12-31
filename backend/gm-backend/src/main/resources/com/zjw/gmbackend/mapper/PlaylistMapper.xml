@@ -124,6 +124,13 @@
         delete from playlist where id = #{id}
     </delete>
 
+    <select id="selectOwnerId" resultType="long">
+        select user_id
+        from playlist
+        where id = #{playlistId}
+    </select>
+
+
 
 
 

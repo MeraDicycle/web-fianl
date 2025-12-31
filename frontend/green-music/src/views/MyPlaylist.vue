@@ -70,6 +70,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
+import { linkEmits } from 'element-plus'
 
 const router = useRouter()
 const route = useRoute()
@@ -85,7 +86,7 @@ const playlist = ref({
   title: '',
   creator: '',
   tags: [],
-  collectCount: 0
+  collectCount: 0,
 })
 
 const songs = ref([])

@@ -1,35 +1,92 @@
 <template>
-  <div class="player-bar">
+  <div class="player-bar" v-if="currentSong">
     <!-- 左侧：歌曲信息 -->
     <div class="left">
-      <img class="cover" :src="song.cover" />
+      <img class="cover" :src="currentSong.cover" />
       <div class="info">
-        <div class="name">{{ song.name }}</div>
-        <div class="artist">{{ song.artist }}</div>
+        <div class="name">{{ currentSong.name }}</div>
+        <div class="artist">{{ currentSong.artists }}</div>
       </div>
     </div>
 
     <!-- 中间：控制 -->
     <div class="center">
       <button>⏮</button>
-      <button class="play">▶</button>
+      <button class="play" @click="toggle">
+        {{ isPlaying ? '⏸' : '▶' }}
+      </button>
       <button>⏭</button>
     </div>
 
-    <!-- 右侧：功能 -->
+    <!-- 右侧 -->
     <div class="right">
       <button>🔊</button>
       <button>❤️</button>
       <button>⚙</button>
     </div>
+
+    <!-- 真正的播放器 -->
+    <audio
+      ref="audioRef"
+      :src="currentSong.file_url"
+      @ended="onEnded"
+      @play="onPlay"
+    />
   </div>
 </template>
 
 <script setup>
-const song = {
-  name: '左转灯 (1000 Times +1)',
-  artist: '汪苏泷 / 周兴哲',
-  cover: 'https://picsum.photos/60'
+import { ref, watch, computed  } from 'vue'
+import { usePlayerStore } from '../store/player.js'
+
+const playerStore = usePlayerStore()
+const audioRef = ref(null)
+
+const currentSong = computed(() => playerStore.currentSong)
+const isPlaying = computed(() => playerStore.isPlaying)
+
+/** 播放 / 暂停 */
+const toggle = () => {
+  playerStore.togglePlay()
+}
+
+/** 歌曲切换时自动播放 */
+watch(
+  () => playerStore.currentSong,
+  async () => {
+    if (audioRef.value) {
+      await audioRef.value.play()
+    }
+  }
+)
+
+
+/** 播放状态变化 */
+watch(
+  () => playerStore.isPlaying,
+  (val) => {
+    if (!audioRef.value) return
+    val ? audioRef.value.play() : audioRef.value.pause()
+  }
+)
+
+const onEnded = () => {
+  playerStore.isPlaying = false
+}
+
+let lastRecordedId = null
+
+const onPlay = () => {
+  const song = currentSong.value
+  if (!song) return
+
+  // 防止同一首歌重复记录
+  if (song.id === lastRecordedId) return
+
+  lastRecordedId = song.id
+
+  // ✅ 真正开始播放，记录历史
+  // api.addHistory(song.id)
 }
 </script>
 
@@ -104,4 +161,3 @@ const song = {
   cursor: pointer;
 }
 </style>
-

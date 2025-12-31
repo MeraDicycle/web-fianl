@@ -23,7 +23,7 @@
         </div>
 
         <div class="actions">
-          <button class="play">▶ 播放</button>
+          <button class="play" @click="playSong">▶ 播放</button>
           <button class="btn" @click="toggleLike">
             {{ song.liked ? '♥ 已收藏' : '♡ 收藏' }}
           </button>
@@ -71,6 +71,9 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
+import {usePlayerStore} from '../../store/player'
+
+const playerStore = usePlayerStore()
 
 const route = useRoute()
 
@@ -201,6 +204,9 @@ const loadMyPlaylists = async () => {
   }
 }
 
+const playSong = () => {
+  playerStore.play(song)
+}
 
 </script>
 

@@ -5,7 +5,7 @@ import com.zjw.gmbackend.pojo.Playlist;
 import java.util.List;
 
 public interface PlaylistService {
-    Object getDetail(Long id);
+    Object getDetail(Long id, Long userId);
 
     void createPlaylist(Playlist playlist);
 

@@ -18,13 +18,15 @@ public class WebConfig implements WebMvcConfigurer {
                         "/auth/login",
                         "/auth/register",
 
+                        "/**/*.options",
+
                         // 公开浏览接口（你项目里这些通常不需要登录）
-                        "/music/recommend",
-                        "/music/tag",
-                        "/music/*",
-                        "/playlist/*",
-                        "/rank",
-                        "/search",
+//                        "/music/recommend",
+//                        "/music/tag",
+//                        "/music/*",
+//                        "/playlist/*",
+//                        "/rank",
+//                        "/search",
 
                         // swagger（如果你有）
                         "/swagger-ui/**",

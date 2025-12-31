@@ -57,7 +57,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 
             // 5) 放入 UserContext
             UserContext.setUserId(userId);
-//            System.out.println(userId);
+            System.out.println("set userId = " + userId + ", thread=" + Thread.currentThread().getName());
             return true;
 
         } catch (JwtException e) {

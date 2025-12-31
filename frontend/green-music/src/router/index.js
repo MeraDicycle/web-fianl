@@ -64,23 +64,27 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-    // 是否需要登录
-    const requiresAuth = to.matched.some(
-        record => record.meta.requiresAuth
-    )
 
-    // 是否已登录（你现在的判定方式）
+    // 是否需要登录
+    // const requiresAuth = to.matched.some(
+    //     record => record.meta.requiresAuth
+    // )
+
     const token = localStorage.getItem('token')
 
-    // 需要登录，但没 token
-    if (requiresAuth && !token) {
-        next({
-            path: '/login',
-            query: { redirect: to.fullPath } // 登录后跳回原页面
-        })
-    } else {
+    // 登录 / 注册页面不需要 token
+    if (to.path === '/login' || to.path === '/register') {
         next()
+        return
     }
+
+    // 没 token，强制跳登录页
+    if (!token) {
+        next('/login')
+        return
+    }
+
+    next()
 })
 
 

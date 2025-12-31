@@ -22,7 +22,8 @@ public class PlaylistController {
 
     @GetMapping("/{id}")
     public Result detail(@PathVariable Long id) {
-        return Result.success(playlistService.getDetail(id));
+        Long userId = UserContext.getUserId();
+        return Result.success(playlistService.getDetail(id, userId));
     }
 
     @PostMapping("/{playlistId}/music/{musicId}")

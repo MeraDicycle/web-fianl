@@ -39,6 +39,9 @@ public interface PlaylistMapper {
     void deleteById(Long id);
     void deleteAllPlaylistMusic(Long playlistId);
 
+    Long selectOwnerId(Long playlistId);
+
+
 
 }
 

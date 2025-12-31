@@ -5,6 +5,7 @@ import com.zjw.gmbackend.mapper.PlaylistMapper;
 import com.zjw.gmbackend.pojo.Music;
 import com.zjw.gmbackend.pojo.Playlist;
 import com.zjw.gmbackend.service.PlaylistService;
+import com.zjw.gmbackend.util.UserContext;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     private FavoriteMapper favoriteMapper;
 
     @Override
-    public Object getDetail(Long id) {
+    public Object getDetail(Long id, Long userId) {
         // 1. 查询歌单基本信息
         Playlist playlist = playlistMapper.selectById(id);
         if (playlist == null) {
@@ -34,10 +35,11 @@ public class PlaylistServiceImpl implements PlaylistService {
         List<Music> musicList = playlistMapper.selectMusicByPlaylistId(id);
 
         // 3. 查询是否已收藏（liked）
-        Long userId = 101L;
+//        Long userId = 101L;
 //        Long userId = UserContext.getUserId();
 
         Integer count = favoriteMapper.exists(userId, 2, id);
+        System.out.println("count"+count+" "+ userId + " " + id);
         playlist.setLiked(count > 0);
 
         // 4. 组装返回结构
@@ -51,8 +53,8 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Override
     public void createPlaylist(Playlist playlist) {
         // TODO：等你做 JWT 之后，这里从 UserContext 拿 userId
-        // Long userId = UserContext.getUserId();
-         Long userId = 101L;
+         Long userId = UserContext.getUserId();
+//         Long userId = 101L;
          playlist.setUserId(userId);
          playlist.setCreatedTime(LocalDateTime.now());
          playlistMapper.insert(playlist);
@@ -60,6 +62,16 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     public void addMusicToPlaylist(Long playlistId, Long musicId) {
+        Long userId = UserContext.getUserId();
+
+        // 1. 查询歌单创建者
+        Long ownerId = playlistMapper.selectOwnerId(playlistId);
+
+        // 2. 权限校验
+        if (!userId.equals(1L) && !userId.equals(ownerId)) {
+            throw new RuntimeException("无权限操作该歌单");
+        }
+
         Integer count = playlistMapper.existsMusic(playlistId, musicId);
         if (count > 0) {
             return; // 已存在，直接忽略（前端体验更好）

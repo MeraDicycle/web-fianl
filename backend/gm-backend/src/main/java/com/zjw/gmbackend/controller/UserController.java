@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
 
-    private static final Long MOCK_USER_ID = 101L;
+//    private static final Long MOCK_USER_ID = 101L;
 
     @Resource
     private UserService userService;

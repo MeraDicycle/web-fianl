@@ -105,6 +105,8 @@ const loadPlaylistDetail = async () => {
 
     const data = res.data.data
 
+    console.log(data.liked)
+
     /* 歌单信息映射 */
     playlist.value = {
       cover: data.playlist.coverUrl,
@@ -115,7 +117,7 @@ const loadPlaylistDetail = async () => {
         : [],
       collectCount: data.playlist.liked ? 1 : 0, // 占位
       commentCount: 0,
-      liked: data.playlist.liked
+      liked: data.playlist.liked === true
     }
 
     /* 歌曲列表映射 */

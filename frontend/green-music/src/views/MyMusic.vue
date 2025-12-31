@@ -253,7 +253,8 @@ const loadCollectedPlaylists = async () => {
       id: item.id,
       name: item.name,
       cover: item.coverUrl,
-      count: item.musicCount
+      count: item.musicCount,
+      liked: item.liked === true,
     }))
   } catch (e) {
     console.error('load collected playlists error:', e)
