@@ -79,4 +79,41 @@
         )
     </delete>
 
+    <select id="selectPage" resultType="com.zjw.gmbackend.pojo.User">
+        select
+            id,
+            username,
+            nickname,
+            avatar_url,
+            role,
+            created_time
+        from user
+        order by id desc
+            limit #{offset}, #{size}
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*) from user
+    </select>
+
+    <update id="update">
+        update user
+        set
+            nickname = #{nickname},
+            avatar_url = #{avatarUrl},
+            role = #{role}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from user where id = #{id}
+    </delete>
+
+    <update id="updatePassword">
+        update user
+        set password = #{password}
+        where id = #{id}
+    </update>
+
+
 </mapper>

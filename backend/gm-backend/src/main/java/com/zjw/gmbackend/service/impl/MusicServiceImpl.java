@@ -8,7 +8,9 @@ import com.zjw.gmbackend.util.UserContext;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MusicServiceImpl implements MusicService {
@@ -50,4 +52,30 @@ public class MusicServiceImpl implements MusicService {
         return musicMapper.selectRankList();
     }
 
+    @Override
+    public void updateMusic(Music music) {
+        musicMapper.update(music);
+    }
+
+    @Override
+    public void deleteMusic(Long id) {
+        musicMapper.deleteById(id);
+    }
+
+    @Override
+    public Map<String, Object> pageList(Integer page, Integer size) {
+        int offset = (page - 1) * size;
+        List<Music> list = musicMapper.selectPage(offset, size);
+        int total = musicMapper.count();
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("list", list);
+        result.put("total", total);
+        return result;
+    }
+
+    @Override
+    public void createMusic(Music music) {
+        musicMapper.insert(music);
+    }
 }

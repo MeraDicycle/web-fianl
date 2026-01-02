@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Playlist {
     private Long id;
-    private Long userId;      // 先从前端传, 后期dto.getUserId() -> JwtUtil.getUserId()
+    private Long userId;
     private String name;
     private String description;
     private LocalDateTime createdTime;

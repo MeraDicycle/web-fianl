@@ -21,5 +21,16 @@ public interface MusicMapper {
 
     List<Music> selectRankList();
 
+    int update(Music music);
+
+    int deleteById(Long id);
+
+    List<Music> selectPage(@Param("offset") int offset,
+                           @Param("size") int size);
+
+    int count();
+
+    int insert(Music music);
+
 
 }

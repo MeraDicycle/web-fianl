@@ -117,7 +117,11 @@ public class PlaylistServiceImpl implements PlaylistService {
         Playlist playlist = playlistMapper.selectById(playlistId);
         if (playlist == null) return;
 
-        if (!playlist.getUserId().equals(userId)) {
+
+        boolean isOwner = playlist.getUserId().equals(userId);
+        boolean isAdmin = userId == 1L;
+
+        if (!isOwner && !isAdmin) {
             throw new RuntimeException("无权删除该歌单");
         }
 
@@ -126,7 +130,5 @@ public class PlaylistServiceImpl implements PlaylistService {
         // 再删歌单
         playlistMapper.deleteById(playlistId);
     }
-
-
 }
 

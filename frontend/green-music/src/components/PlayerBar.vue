@@ -74,7 +74,6 @@ watch(
   }
 )
 
-
 const onEnded = () => {
   playerStore.next()
 }

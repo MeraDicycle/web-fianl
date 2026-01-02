@@ -83,6 +83,7 @@ const song = ref({
   artists: '',
   album: '-',
   language: '-',
+  file_url: '-',
   genre: '-',
   company: '-',
   releaseDate: '-',
@@ -112,6 +113,7 @@ const loadSongDetail = async () => {
       id: id,
       name: data.title,
       artists: data.artist,
+      file_url: data.fileUrl,
       album: '-',               // 后端未提供
       language: '-',            // 后端未提供
       genre: data.tags || '-',  // 用 tags 兜底

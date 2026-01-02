@@ -3,6 +3,7 @@ package com.zjw.gmbackend.util;
 public class UserContext {
 
     private static final ThreadLocal<Long> USER_ID = new ThreadLocal<>();
+    private static final ThreadLocal<Integer> ROLE = new ThreadLocal<>();
 
     public static void setUserId(Long userId) {
         USER_ID.set(userId);

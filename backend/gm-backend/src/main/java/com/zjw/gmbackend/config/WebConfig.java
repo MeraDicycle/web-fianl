@@ -3,6 +3,7 @@ package com.zjw.gmbackend.config;
 import com.zjw.gmbackend.interceptor.AuthInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -12,29 +13,31 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
 
         registry.addInterceptor(new AuthInterceptor())
-                .addPathPatterns("/**") // 默认全拦
+                .addPathPatterns("/**")
                 .excludePathPatterns(
-                        // 登录注册相关
+                        // 登录注册
                         "/auth/login",
                         "/auth/register",
 
-                        "/**/*.options",
+                        // 静态资源（⭐关键）
+                        "/audio/**",
+                        "/**/*.mp3",
+                        "/**/*.jpg",
+                        "/**/*.png",
+                        "/**/*.css",
+                        "/**/*.js",
 
-                        // 公开浏览接口（你项目里这些通常不需要登录）
-//                        "/music/recommend",
-//                        "/music/tag",
-//                        "/music/*",
-//                        "/playlist/*",
-//                        "/rank",
-//                        "/search",
-
-                        // swagger（如果你有）
+                        // swagger
                         "/swagger-ui/**",
-                        "/v3/api-docs/**",
-
-                        // 静态资源（如果有）
-                        "/favicon.ico"
+                        "/v3/api-docs/**"
                 );
     }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/audio/**")
+                .addResourceLocations("classpath:/static/audio/");
+    }
 }
+
 

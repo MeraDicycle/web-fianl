@@ -72,7 +72,40 @@
             limit 50
     </select>
 
+    <update id="update">
+        update music
+        set
+            title = #{title},
+            artist = #{artist},
+            cover_url = #{coverUrl},
+            duration_sec = #{durationSec},
+            lyric = #{lyric},
+            tags = #{tags}
+        where id = #{id}
+    </update>
 
+    <delete id="deleteById">
+        delete from music where id = #{id}
+    </delete>
 
+    <select id="selectPage" resultType="com.zjw.gmbackend.pojo.Music">
+        select id, title, artist, cover_url, duration_sec, lyric, tags
+        from music
+        order by id desc
+            limit #{offset}, #{size}
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*) from music
+    </select>
+
+    <insert id="insert">
+        insert into music (
+            title, artist, cover_url, duration_sec, lyric, tags
+        ) values (
+                     #{title}, #{artist}, #{coverUrl},
+                     #{durationSec}, #{lyric}, #{tags}
+                 )
+    </insert>
 
 </mapper>

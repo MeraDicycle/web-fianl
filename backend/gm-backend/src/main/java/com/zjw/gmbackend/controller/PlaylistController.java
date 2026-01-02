@@ -50,7 +50,6 @@ public class PlaylistController {
     @GetMapping("/my")
     public Result listMyPlaylist() {
          Long userId = UserContext.getUserId();
-//        Long userId = 101L;
         return Result.success(playlistService.listByUserId(userId));
     }
 
@@ -65,14 +64,10 @@ public class PlaylistController {
 
     @DeleteMapping("/{playlistId}")
     public Result deletePlaylist(@PathVariable Long playlistId) {
-//        Long userId = 101L;
         Long userId = UserContext.getUserId();
         playlistService.deletePlaylist(playlistId, userId);
         return Result.success();
     }
-
-
-
 
 }
 

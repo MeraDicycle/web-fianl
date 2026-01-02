@@ -12,6 +12,16 @@ import SongDetail from '../views/explore/SongDetail.vue'
 import MyPlaylist from '../views/MyPlaylist.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
+import AdminLayout from '../admin/layout/AdminLayout.vue'
+import MusicManage from '../admin/views/MusicManage.vue'
+import PlaylistManage from '../admin/views/PlaylistManage.vue'
+import UserManage from '../admin/views/UserManage.vue'
+
+
+import AudioTest from '../views/AudioTest.vue'
+
+
+
 
 const routes = [
     {
@@ -54,7 +64,31 @@ const routes = [
     {
         path: '/register',
         component: Register
-    }
+    },
+    {
+        path: '/admin',
+        redirect: '/admin/music',
+        component: AdminLayout,
+        children: [
+            {
+                path: 'music',
+                component: MusicManage
+            },
+            {
+                path: 'playlist',
+                component: PlaylistManage
+            },
+            {
+                path: 'user',
+                component: UserManage
+            }
+        ]
+    },
+    {
+  path: '/audio-test',
+  component: AudioTest
+}
+
 ]
 
 
@@ -82,6 +116,25 @@ router.beforeEach((to, from, next) => {
     if (!token) {
         next('/login')
         return
+    }
+
+    if (to.path.startsWith('/admin')) {
+
+        const userStr = localStorage.getItem('user')
+        if (!userStr) {
+            // 未登录
+            next('/login')
+            return
+        }
+
+        const user = JSON.parse(userStr)
+
+        // 非管理员（你项目的假设：管理员 id = 1）
+        if (user.id !== 1) {
+            alert('无管理员权限')
+            next('/')   // 或者跳回首页
+            return
+        }
     }
 
     next()

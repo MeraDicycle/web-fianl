@@ -5,12 +5,15 @@ import com.zjw.gmbackend.mapper.UserMapper;
 import com.zjw.gmbackend.pojo.Music;
 import com.zjw.gmbackend.pojo.User;
 import com.zjw.gmbackend.service.UserService;
+import com.zjw.gmbackend.util.PasswordUtil;
 import jakarta.annotation.Resource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -85,6 +88,65 @@ public class UserServiceImpl implements UserService {
 
         // 3. 只保留最近 20 条
         userMapper.deleteExceedLimit(userId, 20);
+    }
+
+    @Override
+    public Map<String, Object> pageList(Integer page, Integer size) {
+        int offset = (page - 1) * size;
+        List<User> list = userMapper.selectPage(offset, size);
+        int total = userMapper.count();
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("list", list);
+        map.put("total", total);
+        return map;
+    }
+
+    @Override
+    public void updateUser(User user) {
+        userMapper.update(user);
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+        userMapper.deleteById(id);
+    }
+
+    @Override
+    public void resetPassword(Long userId) {
+        // 1. 明文密码
+        String rawPassword = "123456";
+
+        // 2. BCrypt 加密
+        String encodedPassword = PasswordUtil.encode(rawPassword);
+
+        // 3. 更新数据库
+        userMapper.updatePassword(userId, encodedPassword);
+    }
+
+
+    @Override
+    public void changePassword(Long userId,
+                               String oldPassword,
+                               String newPassword) {
+
+        // 1. 查用户
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+
+        // 2. 校验旧密码
+        boolean match = PasswordUtil.matches(oldPassword, user.getPassword());
+        if (!match) {
+            throw new RuntimeException("原密码错误");
+        }
+
+        // 3. 新密码加密
+        String encoded = PasswordUtil.encode(newPassword);
+
+        // 4. 更新数据库
+        userMapper.updatePassword(userId, encoded);
     }
 }
 

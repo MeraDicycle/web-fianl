@@ -13,7 +13,32 @@
         </div>
         <div class="actions">
           <button class="btn logout" @click="logout">退出登录</button>
+          <button class="btn" @click="openPasswordDialog">修改密码</button>
         </div>
+
+        <el-dialog title="修改密码" v-model="passwordVisible" width="400px">
+          <el-form :model="passwordForm" :rules="rules" ref="passwordFormRef" label-width="90px">
+            <el-form-item label="原密码" prop="oldPassword">
+              <el-input v-model="passwordForm.oldPassword" type="password" show-password />
+            </el-form-item>
+
+            <el-form-item label="新密码" prop="newPassword">
+              <el-input v-model="passwordForm.newPassword" type="password" show-password />
+            </el-form-item>
+
+            <el-form-item label="确认密码" prop="confirmPassword">
+              <el-input v-model="passwordForm.confirmPassword" type="password" show-password />
+            </el-form-item>
+          </el-form>
+
+          <template #footer>
+            <el-button @click="passwordVisible = false">取消</el-button>
+            <el-button type="primary" @click="submitPassword">
+              确认修改
+            </el-button>
+          </template>
+        </el-dialog>
+
 
       </div>
 
@@ -118,10 +143,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive  } from 'vue'
 import { useRouter } from 'vue-router'
 import { Setting } from '@element-plus/icons-vue'
 import axios from 'axios'
+import { ElMessage } from 'element-plus'
 const router = useRouter()
 
 const tabs = [
@@ -296,6 +322,70 @@ const loadCreatedPlaylists = async () => {
   } catch (e) {
     console.error('load created playlists error:', e)
   }
+}
+
+
+
+
+
+/** 弹窗状态 */
+const passwordVisible = ref(false)
+const passwordFormRef = ref(null)
+
+/** 表单数据 */
+const passwordForm = reactive({
+  oldPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+})
+
+/** 表单校验规则 */
+const rules = {
+  oldPassword: [
+    { required: true, message: '请输入原密码', trigger: 'blur' }
+  ],
+  newPassword: [
+    { required: true, message: '请输入新密码', trigger: 'blur' },
+    { min: 6, message: '密码至少 6 位', trigger: 'blur' }
+  ],
+  confirmPassword: [
+    { required: true, message: '请确认新密码', trigger: 'blur' },
+    {
+      validator: (rule, value, callback) => {
+        if (value !== passwordForm.newPassword) {
+          callback(new Error('两次输入的密码不一致'))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'blur'
+    }
+  ]
+}
+
+/** 打开弹窗 */
+const openPasswordDialog = () => {
+  passwordForm.oldPassword = ''
+  passwordForm.newPassword = ''
+  passwordForm.confirmPassword = ''
+  passwordVisible.value = true
+}
+
+/** 提交修改密码 */
+const submitPassword = () => {
+  passwordFormRef.value.validate(async (valid) => {
+    if (!valid) return
+
+    await axios.post('/user/change-password', {
+      oldPassword: passwordForm.oldPassword,
+      newPassword: passwordForm.newPassword
+    })
+
+    ElMessage.success('密码修改成功，请重新登录')
+
+    // 强制退出登录
+    logout()
+  })
 }
 
 
