@@ -1,22 +1,30 @@
 <template>
-  <div class="player-bar" v-if="currentSong">
+  <div class="player-bar">
     <!-- 左侧：歌曲信息 -->
-    <div class="left">
-      <img class="cover" :src="currentSong.cover" />
-      <div class="info">
-        <div class="name">{{ currentSong.name }}</div>
-        <div class="artist">{{ currentSong.artists }}</div>
-      </div>
-    </div>
+<!-- 左侧：歌曲信息 -->
+<div class="left" v-if="currentSong">
+  <img class="cover" :src="currentSong.cover" />
+  <div class="info">
+    <div class="name">{{ currentSong.name }}</div>
+    <div class="artist">{{ currentSong.artists }}</div>
+  </div>
+</div>
+
+<div class="left" v-else>
+  <div class="info">
+    <div class="name">暂无播放</div>
+    <div class="artist">—</div>
+  </div>
+</div>
 
     <!-- 中间：控制 -->
-<div class="center">
-  <button @click="prev">⏮</button>
-  <button class="play" @click="toggle">
-    {{ isPlaying ? '⏸' : '▶' }}
-  </button>
-  <button @click="next">⏭</button>
-</div>
+    <div class="center">
+      <button @click="prev">⏮</button>
+      <button class="play" @click="toggle">
+        {{ isPlaying ? '⏸' : '▶' }}
+      </button>
+      <button @click="next">⏭</button>
+    </div>
 
 
     <!-- 右侧 -->
@@ -27,17 +35,17 @@
     </div>
 
     <!-- 真正的播放器 -->
-    <audio
-      ref="audioRef"
-      :src="currentSong.file_url"
-      @ended="onEnded"
-      @play="onPlay"
-    />
+<audio
+  ref="audioRef"
+  :src="currentSong ? currentSong.file_url : ''"
+  @ended="onEnded"
+  @play="onPlay"
+/>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, computed  } from 'vue'
+import { ref, watch, computed, nextTick } from 'vue'
 import { usePlayerStore } from '../store/player.js'
 import axios from 'axios'
 
@@ -55,12 +63,22 @@ const toggle = () => {
 /** 歌曲切换时自动播放 */
 watch(
   () => playerStore.currentSong,
-  async () => {
-    if (audioRef.value) {
-      await audioRef.value.play()
+  async (song) => {
+    if (!song || !audioRef.value) return
+
+    await nextTick() // 等 src 真正更新
+    audioRef.value.load()
+    
+    try {
+      if (playerStore.isPlaying) {
+        await audioRef.value.play()
+      }
+    } catch (e) {
+      console.warn('play failed:', e)
     }
   }
 )
+
 
 
 /** 播放状态变化 */

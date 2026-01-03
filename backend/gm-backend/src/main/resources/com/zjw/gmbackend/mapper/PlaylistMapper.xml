@@ -26,6 +26,7 @@
             m.title,
             m.artist,
             m.cover_url,
+            m.file_url,
             m.duration_sec
         from playlist_music pm
                  join music m on pm.music_id = m.id

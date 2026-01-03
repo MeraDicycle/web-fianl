@@ -57,7 +57,7 @@
           <span v-if="song.vip" class="vip">VIP</span>
         </span>
 
-        <span class="col-artist">{{ song.artist }}</span>
+        <span class="col-artist">{{ song.artists }}</span>
         <span class="col-album">{{ song.album }}</span>
         <span class="col-duration">{{ song.duration }}</span>
       </div>
@@ -123,15 +123,27 @@ const loadPlaylistDetail = async () => {
     }
 
     /* 歌曲列表映射 */
-    songs.value = data.musicList.map(item => ({
-      id: item.id,
-      name: item.title,
-      artist: item.artist,
-      album: '-', // 后端未提供
-      duration: formatDuration(item.durationSec),
-      vip: false,
-      cover: item.coverUrl  
-    }))
+    songs.value = data.musicList.map(item => {
+      const rawUrl = item.fileUrl
+      const fileUrl = rawUrl
+        ? (rawUrl.startsWith('http')
+          ? rawUrl
+          : `http://localhost:8080${rawUrl}`)
+        : ''
+
+      return {
+        id: item.id,
+        name: item.title,
+        artists: item.artist,          // ✅ 统一：artists
+        album: '-',
+        duration: formatDuration(item.durationSec),
+        vip: false,
+        cover: item.coverUrl,
+        file_url: fileUrl              // ✅ 播放器唯一认这个
+      }
+    })
+
+
   } catch (e) {
     console.error('load playlist detail error:', e)
     songs.value = []
@@ -164,16 +176,17 @@ const togglePlaylistLike = async () => {
 }
 
 const playFromPlaylist = (song) => {
+  if (!song.file_url) {
+    console.warn('❌ song has no file_url:', song)
+    return
+  }
   playerStore.play(song, songs.value)
 }
-
 
 
 onMounted(() => {
   loadPlaylistDetail()
 })
-
-
 </script>
 
 <style scoped>
