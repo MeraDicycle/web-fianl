@@ -85,7 +85,7 @@ const select = (value) => {
 // 🔹 核心：请求歌单列表
 const loadPlaylists = async () => {
     try {
-        const res = await axios.get('http://localhost:8080/playlist/list', {
+        const res = await axios.get('/playlist/list', {
             params: {
                 category: selectedCategory.value,
                 page: currentPage.value,

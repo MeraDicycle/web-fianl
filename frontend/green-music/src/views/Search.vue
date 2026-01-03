@@ -65,10 +65,7 @@ const results = ref([])
 
 const hotKeywords = [
   '周杰伦',
-  '华语流行',
-  '学习 BGM',
-  '周深',
-  '电子音乐'
+  '林俊杰'
 ]
 
 const goSongDetail = (id) => {
@@ -81,7 +78,7 @@ const doSearch = async () => {
   searched.value = true
 
   try {
-    const res = await axios.get('http://localhost:8080/search', {
+    const res = await axios.get('/search', {
       params: {
         keyword: keyword.value
       }

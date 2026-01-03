@@ -210,7 +210,7 @@ const logout = () => {
 /* 保存修改 */
 const saveProfile = async () => {
   try {
-    await axios.put('http://localhost:8080/user/profile', {
+    await axios.put('/user/profile', {
       nickname: editForm.value.nickname,
       avatarUrl: editForm.value.avatar
     })
@@ -237,7 +237,7 @@ const formatDuration = (sec) => {
 
 const loadUserInfo = async () => {
   try {
-    const res = await axios.get('http://localhost:8080/user/me')
+    const res = await axios.get('/user/me')
     const data = res.data.data
 
     user.value = {
@@ -252,7 +252,7 @@ const loadUserInfo = async () => {
 
 const loadLikedSongs = async () => {
   try {
-    const res = await axios.get('http://localhost:8080/favorite/music')
+    const res = await axios.get('/favorite/music')
 
     const list = res.data.data || []
 
@@ -271,7 +271,7 @@ const loadLikedSongs = async () => {
 
 const loadCollectedPlaylists = async () => {
   try {
-    const res = await axios.get('http://localhost:8080/favorite/playlist')
+    const res = await axios.get('/favorite/playlist')
 
     const list = res.data.data || []
 
@@ -290,7 +290,7 @@ const loadCollectedPlaylists = async () => {
 
 const loadHistorySongs = async () => {
   try {
-    const res = await axios.get('http://localhost:8080/user/history')
+    const res = await axios.get('/user/history')
 
     const list = res.data.data || []
 
@@ -309,7 +309,7 @@ const loadHistorySongs = async () => {
 
 const loadCreatedPlaylists = async () => {
   try {
-    const res = await axios.get('http://localhost:8080/playlist/my')
+    const res = await axios.get('/playlist/my')
 
     const list = res.data.data || []
 
@@ -419,6 +419,21 @@ onMounted(() => {
   align-items: center;
   gap: 16px;
   padding: 20px 40px 10px;
+}
+
+.btn {
+  margin: 10px;
+  padding: 2px;
+  background-color: #e0f7f1;
+  color: black;
+  border-radius: 6px;
+  border: none;
+  transition: all 0.3s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+
 }
 
 .avatar {

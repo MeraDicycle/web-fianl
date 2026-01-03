@@ -16,12 +16,7 @@
 
         <el-table-column label="封面" width="120">
           <template #default="{ row }">
-            <el-image
-              v-if="row.coverUrl"
-              :src="row.coverUrl"
-              style="width: 60px; height: 60px"
-              fit="cover"
-            />
+            <el-image v-if="row.coverUrl" :src="row.coverUrl" style="width: 60px; height: 60px" fit="cover" />
           </template>
         </el-table-column>
 
@@ -33,10 +28,7 @@
             <el-button size="small" @click="openEdit(row)">
               编辑
             </el-button>
-            <el-popconfirm
-              title="确认删除该歌曲？"
-              @confirm="remove(row.id)"
-            >
+            <el-popconfirm title="确认删除该歌曲？" @confirm="remove(row.id)">
               <template #reference>
                 <el-button size="small" type="danger">
                   删除
@@ -48,23 +40,12 @@
       </el-table>
 
       <!-- 分页 -->
-      <el-pagination
-        style="margin-top: 16px; text-align: right"
-        background
-        layout="prev, pager, next, total"
-        :current-page="page"
-        :page-size="size"
-        :total="total"
-        @current-change="changePage"
-      />
+      <el-pagination style="margin-top: 16px; text-align: right" background layout="prev, pager, next, total"
+        :current-page="page" :page-size="size" :total="total" @current-change="changePage" />
     </el-card>
 
     <!-- 新增 / 编辑弹窗 -->
-    <el-dialog
-      :title="form.id ? '编辑歌曲' : '新增歌曲'"
-      v-model="visible"
-      width="600px"
-    >
+    <el-dialog :title="form.id ? '编辑歌曲' : '新增歌曲'" v-model="visible" width="600px">
       <el-form :model="form" label-width="90px">
         <el-form-item label="歌名">
           <el-input v-model="form.title" />
@@ -80,6 +61,10 @@
 
         <el-form-item label="时长(s)">
           <el-input-number v-model="form.durationSec" :min="0" />
+        </el-form-item>
+
+        <el-form-item label="音频地址">
+          <el-input v-model="form.fileUrl" placeholder="例如：/audio/test.mp3" />
         </el-form-item>
 
         <el-form-item label="标签">
@@ -117,6 +102,7 @@ const form = reactive({
   title: '',
   artist: '',
   coverUrl: '',
+  fileUrl: '',
   durationSec: 0,
   tags: '',
   lyric: ''
@@ -158,11 +144,12 @@ const openEdit = (row) => {
 }
 
 const submit = async () => {
-  if (form.id) {
-    await axios.put(`/music/${form.id}`, form)
-  } else {
-    await axios.post('/music', form)
-  }
+  // if (form.id) {
+  //   await axios.put(`/music/${form.id}`, form)
+  // } else {
+  //   await axios.post('/music', form)
+  // }
+  await axios.post('/music', form)
   ElMessage.success('操作成功')
   visible.value = false
   load()

@@ -105,7 +105,7 @@ const loadPlaylistDetail = async () => {
   try {
     const id = route.params.id
 
-    const res = await axios.get(`http://localhost:8080/playlist/${id}`)
+    const res = await axios.get(`/playlist/${id}`)
 
     const data = res.data.data
 
@@ -155,7 +155,7 @@ const togglePlaylistLike = async () => {
     const playlistId = route.params.id
 
     await axios.post(
-      `http://localhost:8080/favorite/playlist/${playlistId}`
+      `/favorite/playlist/${playlistId}`
     )
 
     // ⭐ 立刻更新前端状态（不等后端再查）

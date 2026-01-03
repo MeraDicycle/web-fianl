@@ -57,7 +57,7 @@ const formatDuration = (sec) => {
 
 const loadRank = async () => {
   try {
-    const res = await axios.get('http://localhost:8080/rank')
+    const res = await axios.get('/rank')
     const list = res.data.data || []
 
     songs.value = list.map(item => ({

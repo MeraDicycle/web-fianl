@@ -69,7 +69,7 @@ const register = async () => {
   }
 
   try {
-    await axios.post('http://localhost:8080/auth/register', form)
+    await axios.post('/auth/register', form)
 
     alert('注册成功，请登录')
     router.push('/login')

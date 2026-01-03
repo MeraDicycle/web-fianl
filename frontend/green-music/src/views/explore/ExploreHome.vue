@@ -47,7 +47,7 @@ const songs = ref([])
 const router = useRouter()
 
 onMounted(async () => {
-  const res = await axios.get('http://localhost:8080/music/recommend')
+  const res = await axios.get('/music/recommend')
 
   songs.value = res.data.data.map(item => ({
     id: item.id,
@@ -58,7 +58,7 @@ onMounted(async () => {
 const playlists = ref([])
 
 onMounted(async () => {
-  const res = await axios.get('http://localhost:8080/playlist/list', {
+  const res = await axios.get('/playlist/list', {
     params: {
       page: 1,
       size: 10

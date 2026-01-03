@@ -99,7 +99,7 @@ const removeSong = async (songId, index) => {
     const playlistId = route.params.id
 
     await axios.delete(
-      `http://localhost:8080/playlist/${playlistId}/music/${songId}`
+      `/playlist/${playlistId}/music/${songId}`
     )
 
     songs.value.splice(index, 1)
@@ -114,7 +114,7 @@ const deletePlaylist = async () => {
 
   try {
     const id = route.params.id
-    await axios.delete(`http://localhost:8080/playlist/${id}`)
+    await axios.delete(`/playlist/${id}`)
 
     alert('删除成功')
     router.push('/my-music') // 回到个人中心
@@ -136,7 +136,7 @@ const formatDuration = (sec) => {
 const loadMyPlaylistDetail = async () => {
   try {
     const id = route.params.id
-    const res = await axios.get(`http://localhost:8080/playlist/${id}`)
+    const res = await axios.get(`/playlist/${id}`)
     const data = res.data.data
 
     playlist.value = {

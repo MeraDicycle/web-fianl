@@ -105,7 +105,7 @@ const loadSongDetail = async () => {
   try {
     const id = route.params.id
 
-    const res = await axios.get(`http://localhost:8080/music/${id}`)
+    const res = await axios.get(`/music/${id}`)
     const data = res.data.data
 
     const rawUrl = data.fileUrl
@@ -142,7 +142,7 @@ const loadSongDetail = async () => {
 const toggleLike = async () => {
   try {
     const id = route.params.id
-    await axios.post(`http://localhost:8080/favorite/music/${id}`)
+    await axios.post(`/favorite/music/${id}`)
     song.value.liked = !song.value.liked
   } catch (e) {
     console.error('toggle like error:', e)
@@ -161,7 +161,7 @@ const addToPlaylist = async (playlist) => {
     const musicId = route.params.id
 
     await axios.post(
-      `http://localhost:8080/playlist/${playlist.id}/music/${musicId}`
+      `/playlist/${playlist.id}/music/${musicId}`
     )
 
     playlist.disabled = true
@@ -176,7 +176,7 @@ const createPlaylist = async () => {
   if (!name) return
 
   try {
-    await axios.post('http://localhost:8080/playlist/create', {
+    await axios.post('/playlist/create', {
       name,
       description: '',
       coverUrl: 'https://picsum.photos/300?new',
@@ -192,14 +192,14 @@ const loadMyPlaylists = async () => {
   try {
     const musicId = route.params.id
 
-    const res = await axios.get('http://localhost:8080/playlist/my')
+    const res = await axios.get('/playlist/my')
     const list = res.data.data || []
 
     // 并行检查是否已加入
     const playlists = await Promise.all(
       list.map(async (item) => {
         const existsRes = await axios.get(
-          `http://localhost:8080/playlist/${item.id}/music/${musicId}/exists`
+          `/playlist/${item.id}/music/${musicId}/exists`
         )
 
         return {
@@ -351,7 +351,7 @@ const playSong = () => {
 }
 
 .playlist-list {
-  max-height: 220px;
+  max-height: 160px;
   overflow-y: auto;
 }
 

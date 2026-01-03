@@ -101,11 +101,11 @@
 
     <insert id="insert">
         insert into music (
-            title, artist, cover_url, duration_sec, lyric, tags
+            title, artist, cover_url, duration_sec, lyric, tags, file_url
         ) values (
                      #{title}, #{artist}, #{coverUrl},
-                     #{durationSec}, #{lyric}, #{tags}
-                 )
+                     #{durationSec}, #{lyric}, #{tags}, #{fileUrl}
+                         )
     </insert>
 
 </mapper>
