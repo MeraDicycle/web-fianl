@@ -101,6 +101,16 @@ const next = () => {
   playerStore.next()
 }
 
+watch(
+  () => playerStore.currentSong,
+  (song) => {
+    if (!song) return
+    console.log('🎵 currentSong:', song)
+    console.log('🎵 audio file_url:', song.file_url)
+  }
+)
+
+
 </script>
 
 <style scoped>
