@@ -109,8 +109,6 @@ watch(
     console.log('🎵 audio file_url:', song.file_url)
   }
 )
-
-
 </script>
 
 <style scoped>

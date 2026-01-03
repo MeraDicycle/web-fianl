@@ -108,12 +108,18 @@ const loadSongDetail = async () => {
     const res = await axios.get(`http://localhost:8080/music/${id}`)
     const data = res.data.data
 
+    const rawUrl = data.fileUrl
+    const fileUrl = rawUrl
+      ? (rawUrl.startsWith('http')
+          ? rawUrl
+          : `http://localhost:8080${rawUrl}`)
+      : ''
 
     song.value = {
       id: id,
       name: data.title,
       artists: data.artist,
-      file_url: data.fileUrl,
+      file_url: fileUrl,
       album: '-',               // 后端未提供
       language: '-',            // 后端未提供
       genre: data.tags || '-',  // 用 tags 兜底
